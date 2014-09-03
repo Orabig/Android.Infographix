@@ -21,19 +21,30 @@ public class DownRightArcShape extends AbstractBorderedDrawable implements
 
 	private Path edges;
 	private Path body;
-
-	public DownRightArcShape(float x1, float x2, float y1, float x3, float y3,
-			float y4) {
-		super();
-		this.x1 = x1;
-		this.x2 = x2;
-		this.y1 = y1;
-		this.x3 = x3;
-		this.y3 = y3;
-		this.y4 = y4;
+	
+	public DownRightArcShape(HSegment start,VSegment to) {
+		this.x1 = start.x1;
+		this.x2 = start.x2;
+		this.y1 = start.y;
+		this.x3 = to.x;
+		this.y3 = to.y1;
+		this.y4 = to.y2;
 		buildEdges();
 		buildBody();
 	}
+//
+//	public DownRightArcShape(float x1, float x2, float y1, float x3, float y3,
+//			float y4) {
+//		super();
+//		this.x1 = x1;
+//		this.x2 = x2;
+//		this.y1 = y1;
+//		this.x3 = x3;
+//		this.y3 = y3;
+//		this.y4 = y4;
+//		buildEdges();
+//		buildBody();
+//	}
 
 	private void buildBody() {
 		body = new Path();

@@ -8,29 +8,72 @@ import android.graphics.Path;
 /**
  * An horizontal or vertical "pipe" shape (rectangle with top and bottom border)
  * 
+ * Edges are drawn on sides, not on start and end of the pipe. End of the pipe
+ * are always horizontal (for a vertical pipe) or vertical (for an horizontal
+ * pipe)
+ * 
+ * 
  * @author Benoit
  * 
  */
 public class PipeShape extends AbstractBorderedDrawable implements
 		IBorderedDrawable {
-	private float x1, x2;
-	private float y1, y2;
+	// A ---------- B
+	// | .......... |
+	// | .......... |
+	// | .......... |
+	// | .......... |
+	// C ---------- D
+
+	private float xa, xb, xc, xd;
+	private float ya, yb, yc, yd;
+
+	// private float x1, x2;
+	// private float y1, y2;
 	private boolean isHorizontal;
 
 	private Path edges;
 	private Path body;
 
-	public PipeShape(float x1, float x2, float y1, float y2,
-			boolean isHorizontal) {
-		super();
-		this.x1 = x1;
-		this.x2 = x2;
-		this.y1 = y1;
-		this.y2 = y2;
-		this.isHorizontal = isHorizontal;
+	public PipeShape(HSegment from, HSegment to) {
+		// A-B
+		xa = from.x1;
+		xb = from.x2;
+		ya = yb = from.y;
+		// C-D
+		xc = to.x1;
+		xd = to.x2;
+		yc = yd = to.y;
+		this.isHorizontal = false;
 		buildEdges();
 		buildBody();
 	}
+
+	public PipeShape(VSegment from, VSegment to) {
+		// A-C
+		xa = xc = from.x;
+		ya = from.y1;
+		yc = from.y2;
+		// B-D
+		xb = xd = to.x;
+		yb = to.y1;
+		yd = to.y2;
+		this.isHorizontal = true;
+		buildEdges();
+		buildBody();
+	}
+
+	// public PipeShape(float x1, float x2, float y1, float y2,
+	// boolean isHorizontal) {
+	// super();
+	// this.x1 = x1;
+	// this.x2 = x2;
+	// this.y1 = y1;
+	// this.y2 = y2;
+	// this.isHorizontal = isHorizontal;
+	// buildEdges();
+	// buildBody();
+	// }
 
 	private void buildBody() {
 		body = new Path();
@@ -43,19 +86,19 @@ public class PipeShape extends AbstractBorderedDrawable implements
 	}
 
 	private void build(Path edges, boolean isBody) {
-		edges.moveTo(x1, y1);
+		edges.moveTo(xa, ya);
 		if (!isHorizontal && !isBody) {
-			edges.lineTo(x1, y2);
-			edges.moveTo(x2, y2);
-			edges.lineTo(x2, y1);
-		} else {
-			edges.lineTo(x2, y1);
-			if (isBody)
-				edges.lineTo(x2, y2);
-			else
-				edges.moveTo(x2, y2);
-			edges.lineTo(x1, y2);
+			edges.lineTo(xc, yc);
+			edges.moveTo(xd, yd);
+			edges.lineTo(xb, yb);
+			return;
 		}
+		edges.lineTo(xb, yb);
+		if (isBody)
+			edges.lineTo(xd, yd);
+		else
+			edges.moveTo(xd, yd);
+		edges.lineTo(xc, yc);
 		if (isBody)
 			edges.close();
 	}
