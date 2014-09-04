@@ -61,5 +61,4 @@ public class CurvedPipeShape extends PipeShape implements IBorderedDrawable {
 				edges.close();
 		}
 	}
-
 }

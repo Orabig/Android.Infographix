@@ -1,6 +1,9 @@
 package com.crocoware.infographix;
 
+import android.graphics.Canvas;
 import android.graphics.Path;
+import android.graphics.PathEffect;
+import android.graphics.Shader;
 
 /**
  * Builds a bordered shape from many others
@@ -114,4 +117,73 @@ public class ComposedBordered extends AbstractBorderedDrawable {
 				"build() should not be called on ComposedBordered class");
 	}
 
+	@Override
+	public void setBodyARGB(int a, int r, int g, int b) {
+		for (AbstractBorderedDrawable part : parts) {
+			part.setBodyARGB(a, r, g, b);
+		}
+	}
+
+	@Override
+	public void setBodyAlpha(int arg0) {
+		for (AbstractBorderedDrawable part : parts) {
+			part.setBodyAlpha(arg0);
+		}
+	}
+
+	@Override
+	public void setBodyColor(int arg0) {
+		for (AbstractBorderedDrawable part : parts) {
+			part.setBodyColor(arg0);
+		}
+	}
+
+	@Override
+	public void setBodyShader(Shader shader) {
+		for (AbstractBorderedDrawable part : parts) {
+			part.setBodyShader(shader);
+		}
+	}
+
+	@Override
+	public void setEdgeARGB(int a, int r, int g, int b) {
+		for (AbstractBorderedDrawable part : parts) {
+			part.setEdgeARGB(a, r, g, b);
+		}
+	}
+
+	@Override
+	public void setEdgeAlpha(int a) {
+		for (AbstractBorderedDrawable part : parts) {
+			part.setEdgeAlpha(a);
+		}
+	}
+
+	@Override
+	public void setEdgeColor(int color) {
+		for (AbstractBorderedDrawable part : parts) {
+			part.setEdgeColor(color);
+		}
+	}
+
+	@Override
+	public void setEdgePathEffect(PathEffect effect) {
+		for (AbstractBorderedDrawable part : parts) {
+			part.setEdgePathEffect(effect);
+		}
+	}
+
+	@Override
+	public void setEdgeWidth(float width) {
+		for (AbstractBorderedDrawable part : parts) {
+			part.setEdgeWidth(width);
+		}
+	}
+
+	@Override
+	public void draw(Canvas canvas) {
+		for (AbstractBorderedDrawable part : parts) {
+			part.draw(canvas);
+		}
+	}
 }

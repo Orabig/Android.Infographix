@@ -1,9 +1,9 @@
 package com.crocoware.infographix.shapes;
 
+import android.graphics.Path;
+
 import com.crocoware.infographix.AbstractBorderedDrawable;
 import com.crocoware.infographix.IBorderedDrawable;
-
-import android.graphics.Path;
 
 /**
  * An horizontal or vertical "pipe" shape (rectangle with top and bottom border)
