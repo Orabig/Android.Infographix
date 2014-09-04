@@ -1,9 +1,8 @@
 package com.crocoware.infographix.shapes;
 
-import com.crocoware.infographix.AbstractBorderedDrawable;
-import com.crocoware.infographix.IBorderedDrawable;
-
 import android.graphics.Path;
+
+import com.crocoware.infographix.IBorderedDrawable;
 
 /**
  * An horizontal or vertical "pipe" shape (rectangle with top and bottom border)
@@ -16,8 +15,7 @@ import android.graphics.Path;
  * @author Benoit
  * 
  */
-public class CurvedPipeShape extends AbstractBorderedDrawable implements
-		IBorderedDrawable {
+public class CurvedPipeShape extends PipeShape implements IBorderedDrawable {
 	// A ---------- B
 	// | .......... |
 	// | .......... |
@@ -25,67 +23,15 @@ public class CurvedPipeShape extends AbstractBorderedDrawable implements
 	// | .......... |
 	// C ---------- D
 
-	private float xa, xb, xc, xd;
-	private float ya, yb, yc, yd;
-
-	// private float x1, x2;
-	// private float y1, y2;
-	private boolean isHorizontal;
-
-	private Path edges;
-	private Path body;
-
 	public CurvedPipeShape(HSegment from, HSegment to) {
-		// A-B
-		xa = from.x1;
-		xb = from.x2;
-		ya = yb = from.y;
-		// C-D
-		xc = to.x1;
-		xd = to.x2;
-		yc = yd = to.y;
-		this.isHorizontal = false;
-		buildEdges();
-		buildBody();
+		super(from, to);
 	}
 
 	public CurvedPipeShape(VSegment from, VSegment to) {
-		// A-C
-		xa = xc = from.x;
-		ya = from.y1;
-		yc = from.y2;
-		// B-D
-		xb = xd = to.x;
-		yb = to.y1;
-		yd = to.y2;
-		this.isHorizontal = true;
-		buildEdges();
-		buildBody();
+		super(from, to);
 	}
 
-	// public PipeShape(float x1, float x2, float y1, float y2,
-	// boolean isHorizontal) {
-	// super();
-	// this.x1 = x1;
-	// this.x2 = x2;
-	// this.y1 = y1;
-	// this.y2 = y2;
-	// this.isHorizontal = isHorizontal;
-	// buildEdges();
-	// buildBody();
-	// }
-
-	private void buildBody() {
-		body = new Path();
-		build(body, true);
-	}
-
-	private void buildEdges() {
-		edges = new Path();
-		build(edges, false);
-	}
-
-	private void build(Path edges, boolean isBody) {
+	protected void build(Path edges, boolean isBody) {
 		edges.moveTo(xa, ya);
 		if (!isHorizontal) {
 			float yac = (ya + yc) / 2;
@@ -114,14 +60,6 @@ public class CurvedPipeShape extends AbstractBorderedDrawable implements
 			if (isBody)
 				edges.close();
 		}
-	}
-
-	protected Path getEdgePath() {
-		return edges;
-	}
-
-	protected Path getBodyPath() {
-		return body;
 	}
 
 }

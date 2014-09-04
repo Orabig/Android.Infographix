@@ -30,4 +30,7 @@ public final class VSegment {
 		return Math.abs(y2 - y1);
 	}
 
+	public VSegment translate(float tx, float ty) {
+		return new VSegment(x + tx, y1 + ty, y2 + ty);
+	}
 }

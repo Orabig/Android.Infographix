@@ -19,44 +19,17 @@ public class DownRightArcShape extends AbstractBorderedDrawable implements
 	private float x1, x2, y1; // Top edge definition
 	private float x3, y3, y4; // Right edge definition
 
-	private Path edges;
-	private Path body;
-	
-	public DownRightArcShape(HSegment start,VSegment to) {
+	public DownRightArcShape(HSegment start, VSegment to) {
 		this.x1 = start.x1;
 		this.x2 = start.x2;
 		this.y1 = start.y;
 		this.x3 = to.x;
 		this.y3 = to.y1;
 		this.y4 = to.y2;
-		buildEdges();
-		buildBody();
-	}
-//
-//	public DownRightArcShape(float x1, float x2, float y1, float x3, float y3,
-//			float y4) {
-//		super();
-//		this.x1 = x1;
-//		this.x2 = x2;
-//		this.y1 = y1;
-//		this.x3 = x3;
-//		this.y3 = y3;
-//		this.y4 = y4;
-//		buildEdges();
-//		buildBody();
-//	}
-
-	private void buildBody() {
-		body = new Path();
-		build(body, true);
+		build();
 	}
 
-	private void buildEdges() {
-		edges = new Path();
-		build(edges, false);
-	}
-
-	private void build(Path path, boolean isBody) {
+	protected void build(Path path, boolean isBody) {
 		path.moveTo(x2, y1);
 
 		// top-right arc
@@ -75,13 +48,49 @@ public class DownRightArcShape extends AbstractBorderedDrawable implements
 	}
 
 	@Override
-	protected Path getEdgePath() {
-		return edges;
+	public float getLeft() {
+		return x1;
 	}
 
 	@Override
-	protected Path getBodyPath() {
-		return body;
+	public float getRight() {
+		return x3;
+	}
+
+	@Override
+	public float getTop() {
+		return y1;
+	}
+
+	@Override
+	public float getBottom() {
+		return y4;
+	}
+
+	@Override
+	public void translate(float dx, float dy) {
+		x1 += dx;
+		x2 += dx;
+		x3 += dx;
+		y1 += dy;
+		y3 += dy;
+		y4 += dy;
+		build();
+	}
+
+	@Override
+	public void resize(float left, float top, float width, float height) {
+		float ratioX = width / getWidth();
+		float ratioY = height / getHeight();
+		x1 *= ratioX;
+		x2 *= ratioX;
+		x3 *= ratioX;
+		y1 *= ratioY;
+		y3 *= ratioY;
+		y4 *= ratioY;
+		float dx = left - getLeft();
+		float dy = top - getTop();
+		translate(dx, dy);
 	}
 
 }

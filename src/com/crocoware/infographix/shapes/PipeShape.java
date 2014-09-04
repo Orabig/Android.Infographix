@@ -25,67 +25,54 @@ public class PipeShape extends AbstractBorderedDrawable implements
 	// | .......... |
 	// C ---------- D
 
-	private float xa, xb, xc, xd;
-	private float ya, yb, yc, yd;
+	protected float xa, xb, xc, xd;
+	protected float ya, yb, yc, yd;
 
 	// private float x1, x2;
 	// private float y1, y2;
-	private boolean isHorizontal;
-
-	private Path edges;
-	private Path body;
+	protected boolean isHorizontal;
 
 	public PipeShape(HSegment from, HSegment to) {
+		float y1 = from.y;
+		float y2 = to.y;
+		if (y1>y2) {
+			float y3=y1;
+			y1=y2;
+			y2=y3;
+		}
 		// A-B
 		xa = from.x1;
 		xb = from.x2;
-		ya = yb = from.y;
+		ya = yb = y1;
 		// C-D
 		xc = to.x1;
 		xd = to.x2;
-		yc = yd = to.y;
+		yc = yd = y2;
 		this.isHorizontal = false;
-		buildEdges();
-		buildBody();
+		build();
 	}
 
 	public PipeShape(VSegment from, VSegment to) {
+		float x1 = from.x;
+		float x2 = to.x;
+		if (x1>x2) {
+			float x3=x1;
+			x1=x2;
+			x2=x3;
+		}
 		// A-C
-		xa = xc = from.x;
+		xa = xc = x1;
 		ya = from.y1;
 		yc = from.y2;
 		// B-D
-		xb = xd = to.x;
+		xb = xd = x2;
 		yb = to.y1;
 		yd = to.y2;
 		this.isHorizontal = true;
-		buildEdges();
-		buildBody();
+		build();
 	}
 
-	// public PipeShape(float x1, float x2, float y1, float y2,
-	// boolean isHorizontal) {
-	// super();
-	// this.x1 = x1;
-	// this.x2 = x2;
-	// this.y1 = y1;
-	// this.y2 = y2;
-	// this.isHorizontal = isHorizontal;
-	// buildEdges();
-	// buildBody();
-	// }
-
-	private void buildBody() {
-		body = new Path();
-		build(body, true);
-	}
-
-	private void buildEdges() {
-		edges = new Path();
-		build(edges, false);
-	}
-
-	private void build(Path edges, boolean isBody) {
+	protected void build(Path edges, boolean isBody) {
 		edges.moveTo(xa, ya);
 		if (!isHorizontal && !isBody) {
 			edges.lineTo(xc, yc);
@@ -103,12 +90,55 @@ public class PipeShape extends AbstractBorderedDrawable implements
 			edges.close();
 	}
 
-	protected Path getEdgePath() {
-		return edges;
+	@Override
+	public float getLeft() {
+		return Math.min(xa, xc);
 	}
 
-	protected Path getBodyPath() {
-		return body;
+	@Override
+	public float getTop() {
+		return Math.min(ya, yb);
+	}
+
+	@Override
+	public void translate(float dx, float dy) {
+		xa += dx;
+		xb += dx;
+		xc += dx;
+		xd += dx;
+		ya += dy;
+		yb += dy;
+		yc += dy;
+		yd += dy;
+
+		build();
+	}
+
+	@Override
+	public void resize(float left, float top, float width, float height) {
+		float ratioX = width / getWidth();
+		float ratioY = height / getHeight();
+		xa *= ratioX;
+		xb *= ratioX;
+		xc *= ratioX;
+		xd *= ratioX;
+		ya *= ratioY;
+		yb *= ratioY;
+		yc *= ratioY;
+		yd *= ratioY;
+		float dx = left - getLeft();
+		float dy = top - getTop();
+		translate(dx, dy);
+	}
+
+	@Override
+	public float getRight() {
+		return Math.max(xb, xd);
+	}
+
+	@Override
+	public float getBottom() {
+		return Math.max(yc, yd);
 	}
 
 }
