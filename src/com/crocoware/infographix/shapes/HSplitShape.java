@@ -12,7 +12,7 @@ import com.crocoware.infographix.ComposedBordered;
  */
 public class HSplitShape extends ComposedBordered {
 
-	private VSegment outputs[];
+	private VSegment outputs[]; // TODO : translate outputs
 
 	/**
 	 * Creates a split shape.

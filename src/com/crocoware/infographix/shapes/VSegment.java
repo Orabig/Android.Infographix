@@ -30,7 +30,29 @@ public final class VSegment {
 		return Math.abs(y2 - y1);
 	}
 
+	/**
+	 * @param tx
+	 * @param ty
+	 * @return a new segment which is the translation of the original
+	 */
 	public VSegment translate(float tx, float ty) {
 		return new VSegment(x + tx, y1 + ty, y2 + ty);
+	}
+
+	/**
+	 * @param ratio
+	 * @return a new segment scaled from the original, with the common bottom
+	 *         point
+	 */
+	public VSegment scaleUp(float ratio) {
+		return new VSegment(x, (y1 - y2) * ratio + y2, y2);
+	}
+
+	/**
+	 * @param ratio
+	 * @return a new segment scaled from the original, with the common top point
+	 */
+	public VSegment scaleBottom(float ratio) {
+		return new VSegment(x, y1, (y2 - y1) * ratio + y1);
 	}
 }
