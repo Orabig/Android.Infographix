@@ -18,6 +18,10 @@ public class Segment {
 		this.y2 = y2;
 	}
 
+	public Segment(Segment start) {
+		this(start.x1,start.y1,start.x2,start.y2);
+	}
+
 	public float getX1() {
 		return x1;
 	}

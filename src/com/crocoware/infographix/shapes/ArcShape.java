@@ -1,14 +1,10 @@
 package com.crocoware.infographix.shapes;
 
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Path;
-import android.graphics.SweepGradient;
-import android.graphics.Path.Direction;
 import android.graphics.PointF;
 import android.graphics.RectF;
-import android.util.Log;
+import android.graphics.SweepGradient;
 
 import com.crocoware.infographix.AbstractBorderedDrawable;
 
@@ -34,8 +30,8 @@ public class ArcShape extends AbstractBorderedDrawable {
 	 */
 	public ArcShape(Segment start, PointF center, float sweepAngle) {
 		super();
-		this.start = start;
-		this.center = center;
+		this.start = new Segment(start);
+		this.center = new PointF(center.x,center.y);
 		startAngle = start.getAngle();
 		this.sweepAngle = sweepAngle;
 		computeRadius(start, center);
@@ -68,7 +64,7 @@ public class ArcShape extends AbstractBorderedDrawable {
 	public float getBottom() {
 		return center.y + outerRadiusY;
 	}
-
+private int[] sweepShader = null;
 	/**
 	 * Defines a shader which will cover the sweep of the arc.
 	 * 
@@ -76,6 +72,9 @@ public class ArcShape extends AbstractBorderedDrawable {
 	 * @param color2
 	 */
 	public void setSweepShader(int color1, int color2) {
+		// The sweepshader must be saved if when translate the shape
+		sweepShader = new int[]{color1,color2};
+		
 		int[] colors = new int[3];
 		float[] pos = new float[3];
 		float sweep = this.sweepAngle;
@@ -104,9 +103,14 @@ public class ArcShape extends AbstractBorderedDrawable {
 	public void translate(float dx, float dy) {
 		start.translate(dx, dy);
 		center.offset(dx, dy);
-		// TODO : Ne fonctionne pas !!
-		// computeRadius(start, center);
+		restoreSweepShader();
 		rebuild();
+	}
+
+	private void restoreSweepShader() {
+		if (sweepShader !=null) {
+			setSweepShader(sweepShader[0], sweepShader[1]);
+		}
 	}
 
 	@Override
@@ -126,6 +130,7 @@ public class ArcShape extends AbstractBorderedDrawable {
 		start.y1 = center.y + ry1 * outerRadiusY;
 		start.y2 = center.y + ry2 * outerRadiusY;
 		computeRadius(start, center);
+		restoreSweepShader();
 		rebuild();
 	}
 

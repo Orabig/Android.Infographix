@@ -35,8 +35,6 @@ public class HJoinShape extends ComposedBordered {
 		// if ( TEST order entry1 < entry2)
 		// throw new IllegalArgumentException("ratio>1");
 
-		float a = entry1.getHeight();
-		float b = entry2.getHeight();
 		float dY = (entry2.y1 - entry1.y2) / 2;
 
 		VSegment SBa = entry1.translateV(width, dY);
@@ -50,5 +48,11 @@ public class HJoinShape extends ComposedBordered {
 
 	public VSegment getOutputSegment() {
 		return output;
+	}
+	
+	@Override
+	public void translate(float dx, float dy) {
+		output.translate(dx, dy);
+		super.translate(dx, dy);
 	}
 }
