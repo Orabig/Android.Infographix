@@ -118,6 +118,7 @@ public class PipeShape extends AbstractBorderedDrawable implements
 	public void resize(float left, float top, float width, float height) {
 		float ratioX = width / getWidth();
 		float ratioY = height / getHeight();
+		translate(- getLeft(),- getTop());
 		xa *= ratioX;
 		xb *= ratioX;
 		xc *= ratioX;
@@ -126,9 +127,7 @@ public class PipeShape extends AbstractBorderedDrawable implements
 		yb *= ratioY;
 		yc *= ratioY;
 		yd *= ratioY;
-		float dx = left - getLeft();
-		float dy = top - getTop();
-		translate(dx, dy);
+		translate(left, top);
 	}
 
 	@Override
