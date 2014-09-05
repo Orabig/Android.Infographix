@@ -103,8 +103,6 @@ public class ArcShape extends AbstractBorderedDrawable {
 		RectF innerOval = getInnerBounds();
 		path.arcTo(innerOval, startAngle + sweepAngle, -sweepAngle);
 
-		Log.e("test", "bounds: " + outerOval + " start=" + startAngle
-				+ " sweep=" + sweepAngle);
 		//			if (isBody)
 		//				path.lineTo(xd, yd);
 		//			else
@@ -120,11 +118,5 @@ public class ArcShape extends AbstractBorderedDrawable {
 	private RectF getInnerBounds() {
 		return new RectF(center.x - innerRadiusX, center.y - innerRadiusY,
 				center.x + innerRadiusX, center.y + innerRadiusY);
-	}
-
-	@Override
-	public void draw(Canvas canvas) {
-		super.draw(canvas);
-		Log.e("test", "draw : " + getBounds());
 	}
 }
