@@ -1,10 +1,12 @@
 package com.crocoware.infographix.shapes;
 
+import android.graphics.PointF;
+
 /**
  * Instances of this class represent oriented segments.
  * 
  * @author Benoit
- *
+ * 
  */
 public class Segment {
 	protected float x1, y1, x2, y2;
@@ -33,7 +35,8 @@ public class Segment {
 	}
 
 	/**
-	 * @return the normal of the segment (left-hand oriented). The returned vector is normalized (length==1)
+	 * @return the normal of the segment (left-hand oriented). The returned
+	 *         vector is normalized (length==1)
 	 */
 	public Vector getNormal() {
 		float dy = -(x2 - x1);
@@ -57,5 +60,27 @@ public class Segment {
 	 */
 	public float getAngle() {
 		return Vector.getAngleOf(x2 - x1, y2 - y1);
+	}
+
+	public float getLength() {
+		return PointF.length(x2 - x1, y2 - y1);
+	}
+
+	public Segment[] split(int count) {
+		if (count <= 0)
+			throw new IllegalArgumentException("count<=0");
+		Segment[] parts = new Segment[count];
+		float x = x1;
+		float y = y1;
+		float dx = (x2 - x1) / count;
+		float dy = (y2 - y1) / count;
+		for (int i = 0; i < count; i++) {
+			float x2 = x1 + (i + 1) * dx;
+			float y2 = y1 + (i + 1) * dy;
+			parts[i] = new Segment(x, y, x2, y2);
+			x = x2;
+			y = y2;
+		}
+		return parts;
 	}
 }

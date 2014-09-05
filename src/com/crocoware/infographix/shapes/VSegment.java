@@ -11,11 +11,11 @@ public final class VSegment extends Segment {
 	}
 
 	public float getX() {
-		return x1;
+		return getX1();
 	}
 
 	public float getHeight() {
-		return Math.abs(y2 - y1);
+		return Math.abs(getY2() - getY1());
 	}
 
 	/**
@@ -24,7 +24,7 @@ public final class VSegment extends Segment {
 	 * @return a new segment which is the translation of the original
 	 */
 	public VSegment translateV(float tx, float ty) {
-		return new VSegment(x1 + tx, y1 + ty, y2 + ty);
+		return new VSegment(getX1() + tx, getY1() + ty, getY2() + ty);
 	}
 
 	/**
@@ -33,7 +33,7 @@ public final class VSegment extends Segment {
 	 *         point
 	 */
 	public VSegment scaleUp(float ratio) {
-		return new VSegment(x1, (y1 - y2) * ratio + y2, y2);
+		return new VSegment(x1, (getY1() - getY2()) * ratio + getY2(), getY2());
 	}
 
 	/**
@@ -41,6 +41,6 @@ public final class VSegment extends Segment {
 	 * @return a new segment scaled from the original, with the common top point
 	 */
 	public VSegment scaleBottom(float ratio) {
-		return new VSegment(x1, y1, (y2 - y1) * ratio + y1);
+		return new VSegment(getX1(), getY1(), (getY2() - getY1()) * ratio + getY1());
 	}
 }
