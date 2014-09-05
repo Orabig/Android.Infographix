@@ -72,22 +72,22 @@ public class PipeShape extends AbstractBorderedDrawable implements
 		rebuild();
 	}
 
-	protected void build(Path edges, boolean isBody) {
-		edges.moveTo(xa, ya);
+	protected void build(Path path, boolean isBody) {
+		path.moveTo(xa, ya);
 		if (!isHorizontal && !isBody) {
-			edges.lineTo(xc, yc);
-			edges.moveTo(xd, yd);
-			edges.lineTo(xb, yb);
+			path.lineTo(xc, yc);
+			path.moveTo(xd, yd);
+			path.lineTo(xb, yb);
 			return;
 		}
-		edges.lineTo(xb, yb);
+		path.lineTo(xb, yb);
 		if (isBody)
-			edges.lineTo(xd, yd);
+			path.lineTo(xd, yd);
 		else
-			edges.moveTo(xd, yd);
-		edges.lineTo(xc, yc);
+			path.moveTo(xd, yd);
+		path.lineTo(xc, yc);
 		if (isBody)
-			edges.close();
+			path.close();
 	}
 
 	@Override
@@ -110,7 +110,6 @@ public class PipeShape extends AbstractBorderedDrawable implements
 		yb += dy;
 		yc += dy;
 		yd += dy;
-
 		rebuild();
 	}
 

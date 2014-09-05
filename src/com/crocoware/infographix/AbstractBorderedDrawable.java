@@ -3,6 +3,7 @@ package com.crocoware.infographix;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Paint.Align;
 import android.graphics.Path;
 import android.graphics.PathEffect;
 import android.graphics.RectF;
@@ -11,6 +12,10 @@ import android.graphics.Shader;
 public abstract class AbstractBorderedDrawable implements IBorderedDrawable {
 	private Paint bodyPaint;
 	private Paint edgePaint;
+	private Paint textPaint;
+	private String text;
+	private float textPositionX;
+	private float textPositionY;
 
 	private Path edges;
 	private Path body;
@@ -23,6 +28,21 @@ public abstract class AbstractBorderedDrawable implements IBorderedDrawable {
 		if (bodyPath != null)
 			canvas.drawPath(bodyPath, getBodyPaint());
 		canvas.drawPath(getEdgePath(), getEdgePaint());
+		if (text != null)
+			canvas.drawText(text, textPositionX,
+					adaptTextPositionY(textPositionY, getTextPaint()),
+					getTextPaint());
+	}
+
+	/**
+	 * This method offset the text to make it vertically centered by default
+	 */
+	private float adaptTextPositionY(float y, Paint paint) {
+		return y - (paint.descent() + paint.ascent()) / 2;
+	}
+
+	public void setText(String text) {
+		this.text = text;
 	}
 
 	@Override
@@ -40,6 +60,12 @@ public abstract class AbstractBorderedDrawable implements IBorderedDrawable {
 	protected final void rebuild() {
 		body = null;
 		edges = null;
+		computeTextPosition();
+	}
+
+	private void computeTextPosition() {
+		textPositionX = getLeft() + getWidth() / 2;
+		textPositionY = getTop() + getHeight() / 2;
 	}
 
 	/**
@@ -86,6 +112,18 @@ public abstract class AbstractBorderedDrawable implements IBorderedDrawable {
 			edgePaint.setStyle(Paint.Style.STROKE);
 		}
 		return edgePaint;
+	}
+
+	protected Paint getTextPaint() {
+		if (textPaint == null) {
+			textPaint = new Paint();
+
+			textPaint.setColor(Color.BLACK);
+			textPaint.setAntiAlias(true);
+			textPaint.setTextAlign(Align.CENTER);
+			computeTextPosition();
+		}
+		return textPaint;
 	}
 
 	// Delegates some Paint methods. Useful with Composed shapes

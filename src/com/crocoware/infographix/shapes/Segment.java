@@ -19,7 +19,7 @@ public class Segment {
 	}
 
 	public Segment(Segment start) {
-		this(start.x1,start.y1,start.x2,start.y2);
+		this(start.x1, start.y1, start.x2, start.y2);
 	}
 
 	public float getX1() {
@@ -86,5 +86,9 @@ public class Segment {
 			y = y2;
 		}
 		return parts;
+	}
+
+	public Vector getVector() {
+		return new Vector(x2 - x1, y2 - y1);
 	}
 }
