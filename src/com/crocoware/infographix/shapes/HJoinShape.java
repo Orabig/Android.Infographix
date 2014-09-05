@@ -30,7 +30,7 @@ public class HJoinShape extends ComposedBordered {
 		super();
 		if (width == 0)
 			throw new IllegalArgumentException("width==0");
-		if (entry1.x != entry2.x)
+		if (entry1.getX() != entry2.getX())
 			throw new IllegalArgumentException("entry1 and 2 are not aligned");
 		// if ( TEST order entry1 < entry2)
 		// throw new IllegalArgumentException("ratio>1");
@@ -39,13 +39,13 @@ public class HJoinShape extends ComposedBordered {
 		float b = entry2.getHeight();
 		float dY = (entry2.y1 - entry1.y2) / 2;
 
-		VSegment SBa = entry1.translate(width, dY);
-		VSegment SBb = entry2.translate(width, -dY);
+		VSegment SBa = entry1.translateV(width, dY);
+		VSegment SBb = entry2.translateV(width, -dY);
 
 		setParts(new CurvedPipeShape(entry1, SBa), new CurvedPipeShape(entry2,
 				SBb));
 
-		output = new VSegment(entry1.x + width, entry1.y1 + dY, entry2.y2 - dY);
+		output = new VSegment(entry1.getX() + width, entry1.y1 + dY, entry2.y2 - dY);
 	}
 
 	public VSegment getOutputSegment() {

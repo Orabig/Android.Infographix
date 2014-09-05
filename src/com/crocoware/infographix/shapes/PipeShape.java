@@ -33,12 +33,12 @@ public class PipeShape extends AbstractBorderedDrawable implements
 	protected boolean isHorizontal;
 
 	public PipeShape(HSegment from, HSegment to) {
-		float y1 = from.y;
-		float y2 = to.y;
-		if (y1>y2) {
-			float y3=y1;
-			y1=y2;
-			y2=y3;
+		float y1 = from.getY();
+		float y2 = to.getY();
+		if (y1 > y2) {
+			float y3 = y1;
+			y1 = y2;
+			y2 = y3;
 		}
 		// A-B
 		xa = from.x1;
@@ -49,16 +49,16 @@ public class PipeShape extends AbstractBorderedDrawable implements
 		xd = to.x2;
 		yc = yd = y2;
 		this.isHorizontal = false;
-		build();
+		rebuild();
 	}
 
 	public PipeShape(VSegment from, VSegment to) {
-		float x1 = from.x;
-		float x2 = to.x;
-		if (x1>x2) {
-			float x3=x1;
-			x1=x2;
-			x2=x3;
+		float x1 = from.getX();
+		float x2 = to.getX();
+		if (x1 > x2) {
+			float x3 = x1;
+			x1 = x2;
+			x2 = x3;
 		}
 		// A-C
 		xa = xc = x1;
@@ -69,7 +69,7 @@ public class PipeShape extends AbstractBorderedDrawable implements
 		yb = to.y1;
 		yd = to.y2;
 		this.isHorizontal = true;
-		build();
+		rebuild();
 	}
 
 	protected void build(Path edges, boolean isBody) {
@@ -111,7 +111,7 @@ public class PipeShape extends AbstractBorderedDrawable implements
 		yc += dy;
 		yd += dy;
 
-		build();
+		rebuild();
 	}
 
 	@Override

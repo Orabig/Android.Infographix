@@ -22,11 +22,11 @@ public class DownRightArcShape extends AbstractBorderedDrawable implements
 	public DownRightArcShape(HSegment start, VSegment to) {
 		this.x1 = start.x1;
 		this.x2 = start.x2;
-		this.y1 = start.y;
-		this.x3 = to.x;
+		this.y1 = start.getY();
+		this.x3 = to.getX();
 		this.y3 = to.y1;
 		this.y4 = to.y2;
-		build();
+		rebuild();
 	}
 
 	protected void build(Path path, boolean isBody) {
@@ -75,7 +75,7 @@ public class DownRightArcShape extends AbstractBorderedDrawable implements
 		y1 += dy;
 		y3 += dy;
 		y4 += dy;
-		build();
+		rebuild();
 	}
 
 	@Override

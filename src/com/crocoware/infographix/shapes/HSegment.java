@@ -4,22 +4,10 @@ package com.crocoware.infographix.shapes;
  * An object representing an horizontal segment
  * 
  */
-public final class HSegment {
-	protected float x1, x2, y;
+public final class HSegment extends Segment {
 
 	public HSegment(float x1, float x2, float y) {
-		super();
-		this.x1 = x1;
-		this.x2 = x2;
-		this.y = y;
-	}
-
-	public float getX1() {
-		return x1;
-	}
-
-	public float getX2() {
-		return x2;
+		super(x1,y,x2,y);
 	}
 
 	public float getWidth() {
@@ -27,7 +15,7 @@ public final class HSegment {
 	}
 
 	public float getY() {
-		return y;
+		return y1;
 	}
 
 }

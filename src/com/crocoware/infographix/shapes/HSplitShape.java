@@ -39,7 +39,7 @@ public class HSplitShape extends ComposedBordered {
 		float Y0 = entry.y1;
 		float Y1 = entry.y2;
 		// Calcul des positions
-		float XB = entry.x;
+		float XB = entry.getX();
 		float XC = XB + width;
 
 		float Ha = (Y1 - Y0) * ratio;

@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PathEffect;
+import android.graphics.RectF;
 import android.graphics.Shader;
 
 public abstract class AbstractBorderedDrawable implements IBorderedDrawable {
@@ -36,17 +37,19 @@ public abstract class AbstractBorderedDrawable implements IBorderedDrawable {
 
 	protected abstract void build(Path path, boolean isBody);
 
-	protected final void build() {
-		body = new Path();
-		build(body, true);
-		edges = new Path();
-		build(edges, false);
+	protected final void rebuild() {
+		body = null;
+		edges = null;
 	}
 
 	/**
 	 * @return the path of the edges of the shape
 	 */
 	protected Path getEdgePath() {
+		if (edges == null) {
+			edges = new Path();
+			build(edges, false);
+		}
 		return edges;
 	}
 
@@ -55,6 +58,10 @@ public abstract class AbstractBorderedDrawable implements IBorderedDrawable {
 	 *         segment only
 	 */
 	protected Path getBodyPath() {
+		if (body == null) {
+			body = new Path();
+			build(body, true);
+		}
 		return body;
 	}
 
@@ -126,6 +133,10 @@ public abstract class AbstractBorderedDrawable implements IBorderedDrawable {
 	@Override
 	public void setEdgeWidth(float width) {
 		getEdgePaint().setStrokeWidth(width);
+	}
+
+	public RectF getBounds() {
+		return new RectF(getLeft(), getTop(), getRight(), getBottom());
 	}
 
 }
