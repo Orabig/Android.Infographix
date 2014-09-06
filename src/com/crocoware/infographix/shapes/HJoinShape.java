@@ -12,7 +12,7 @@ import com.crocoware.infographix.ComposedBordered;
  */
 public class HJoinShape extends ComposedBordered {
 
-	private VSegment output; // TODO : translate output
+	private Segment output; // TODO : translate output
 
 	/**
 	 * Creates a split shape.
@@ -26,27 +26,27 @@ public class HJoinShape extends ComposedBordered {
 	 *            The ratio of both output pipes
 	 * @param gap
 	 */
-	public HJoinShape(VSegment entry1, VSegment entry2, float width) {
+	public HJoinShape(Segment entry1, Segment entry2, float width) {
 		super();
 		if (width == 0)
 			throw new IllegalArgumentException("width==0");
-		if (entry1.getX() != entry2.getX())
+		if (entry1.getX1() != entry2.getX1())
 			throw new IllegalArgumentException("entry1 and 2 are not aligned");
 		// if ( TEST order entry1 < entry2)
 		// throw new IllegalArgumentException("ratio>1");
 
 		float dY = (entry2.y1 - entry1.y2) / 2;
 
-		VSegment SBa = entry1.translateV(width, dY);
-		VSegment SBb = entry2.translateV(width, -dY);
+		Segment SBa = new Segment(entry1);SBa.translate(width, dY);
+		Segment SBb = new Segment(entry2);SBb.translate(width, -dY);
 
-		setParts(new CurvedPipeShape(entry1, SBa), new CurvedPipeShape(entry2,
+		setParts(new PipeShape(entry1, SBa), new PipeShape(entry2,
 				SBb));
 
-		output = new VSegment(entry1.getX() + width, entry1.y1 + dY, entry2.y2 - dY);
+		output = new Segment(entry1.getX1() + width, entry1.y1 + dY,entry1.getX2() + width, entry2.y2 - dY);
 	}
 
-	public VSegment getOutputSegment() {
+	public Segment getOutputSegment() {
 		return output;
 	}
 	

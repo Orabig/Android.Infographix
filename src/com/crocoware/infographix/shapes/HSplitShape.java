@@ -12,7 +12,7 @@ import com.crocoware.infographix.ComposedBordered;
  */
 public class HSplitShape extends ComposedBordered {
 
-	private VSegment outputs[]; // TODO : translate outputs
+	private Segment outputs[]; // TODO : translate outputs
 
 	/**
 	 * Creates a split shape.
@@ -26,7 +26,7 @@ public class HSplitShape extends ComposedBordered {
 	 *            The ratio of both output pipes
 	 * @param gap
 	 */
-	public HSplitShape(VSegment entry, float width, float ratio, float gap) {
+	public HSplitShape(Segment entry, float width, float ratio, float gap) {
 		super();
 		if (width == 0)
 			throw new IllegalArgumentException("width==0");
@@ -39,7 +39,7 @@ public class HSplitShape extends ComposedBordered {
 		float Y0 = entry.y1;
 		float Y1 = entry.y2;
 		// Calcul des positions
-		float XB = entry.getX();
+		float XB = entry.getX1(); // TODO : was getX on VSeg
 		float XC = XB + width;
 
 		float Ha = (Y1 - Y0) * ratio;
@@ -52,22 +52,22 @@ public class HSplitShape extends ComposedBordered {
 		float YCa3 = YB1 + gap * (ratio);
 		float YCa4 = Y1 + gap * (ratio);
 
-		VSegment SBa = new VSegment(XB, Y0, YB1);
-		VSegment SBb = new VSegment(XB, YB1, Y1);
+		Segment SBa = new Segment(XB, Y0, XB, YB1);// TODO : was VSeg
+		Segment SBb = new Segment(XB, YB1, XB, Y1);// TODO : was VSeg
 
-		VSegment SCa = new VSegment(XC, YCa1, YCa2);
-		VSegment SCb = new VSegment(XC, YCa3, YCa4);
+		Segment SCa = new Segment(XC, YCa1, XC, YCa2);// TODO : was VSeg
+		Segment SCb = new Segment(XC, YCa3, XC, YCa4);// TODO : was VSeg
 
-		setParts(new CurvedPipeShape(SBa, SCa), new CurvedPipeShape(SBb, SCb));
+		setParts(new PipeShape(SBa, SCa), new PipeShape(SBb, SCb));
 
-		outputs = new VSegment[] { SCa, SCb };
+		outputs = new Segment[] { SCa, SCb };
 	}
 
-	public VSegment[] getOutputSegments() {
+	public Segment[] getOutputSegments() {
 		return outputs;
 	}
 
-	public VSegment getOutputSegments(int n) {
+	public Segment getOutputSegments(int n) {
 		return outputs[n];
 	}
 }

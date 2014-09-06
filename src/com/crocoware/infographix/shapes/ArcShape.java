@@ -5,12 +5,14 @@ import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.graphics.SweepGradient;
+import android.util.Log;
 
 import com.crocoware.infographix.AbstractBorderedDrawable;
 
-public class ArcShape extends AbstractBorderedDrawable {
+public class ArcShape extends AbstractBorderedDrawable implements IOutputShape,
+		IPipelinePart {
 
-	private Segment start;
+	private Segment start, output;
 	private PointF center;
 	private float startAngle;
 	private float sweepAngle;
@@ -30,12 +32,66 @@ public class ArcShape extends AbstractBorderedDrawable {
 	 */
 	public ArcShape(Segment start, PointF center, float sweepAngle) {
 		super();
-		this.start = new Segment(start);
-		this.center = new PointF(center.x,center.y);
-		startAngle = start.getAngle();
+		this.start = new Segment(sweepAngle > 0 ? start.reverse() : start);
+		this.center = new PointF(center.x, center.y);
+		startAngle = this.start.getAngle();
 		this.sweepAngle = sweepAngle;
 		computeRadius(start, center);
+		computeOutput();
 		rebuild();
+	}
+
+	/**
+	 * Creates an arc which is "extruded" from the start segment. By default,
+	 * this shape is a circle, but this can be changed if resized
+	 * 
+	 * @param currentInput
+	 * @param angle
+	 * @param length
+	 *            the total length of the arc
+	 */
+	public ArcShape(Segment start, float angle, float length) {
+		this(start, computeCenterFor(start, angle, length), angle);
+	}
+
+	/**
+	 * Creates an arc which is "extruded" from the start segment. By default,
+	 * this shape is a circle, but this can be changed if resized
+	 * 
+	 * @param currentInput
+	 * @param angle
+	 * @param length
+	 *            the total length of the arc
+	 */
+	public ArcShape(Segment start, float angle) {
+		this(start, computeCenterFor(start, angle), angle);
+	}
+
+	private static PointF computeCenterFor(Segment start, float angle,
+			float length) {
+		// Compute innerRadius from length
+		// Radius = innerRadius + width/2
+		// length = Radius * angle (rad)
+		float angleRad = angle * (float) Math.PI / 180;
+		float innerRadius = length / Math.abs(angleRad) - start.getLength() / 2;
+		if (innerRadius < 0)
+			innerRadius = 0;
+		return getCenterAtRadius(start, angle, innerRadius);
+	}
+
+	private static PointF computeCenterFor(Segment start, float angle) {
+		return getCenterAtRadius(start, angle, start.getLength());
+	}
+
+	private static PointF getCenterAtRadius(Segment start, float angle,
+			float innerRadius) {
+		Vector dir = start.getVector().normalize();
+		if (angle < 0)
+			return new PointF(start.x1 - dir.dx * innerRadius, start.y1
+					- dir.dy * innerRadius);
+		else
+			return new PointF(start.x2 + dir.dx * innerRadius, start.y2
+					+ dir.dy * innerRadius);
 	}
 
 	private void computeRadius(Segment start, PointF center) {
@@ -43,6 +99,16 @@ public class ArcShape extends AbstractBorderedDrawable {
 				start.getY1() - center.y);
 		outerRadiusX = outerRadiusY = PointF.length(start.getX2() - center.x,
 				start.getY2() - center.y);
+	}
+
+	private void computeOutput() {
+		output = start.rotate(center, sweepAngle);
+		if (sweepAngle > 0)
+			output = output.reverse();
+	}
+
+	public Segment getOutput() {
+		return output;
 	}
 
 	@Override
@@ -64,7 +130,9 @@ public class ArcShape extends AbstractBorderedDrawable {
 	public float getBottom() {
 		return center.y + outerRadiusY;
 	}
-private int[] sweepShader = null;
+
+	private int[] sweepShader = null;
+
 	/**
 	 * Defines a shader which will cover the sweep of the arc.
 	 * 
@@ -73,8 +141,8 @@ private int[] sweepShader = null;
 	 */
 	public void setSweepShader(int color1, int color2) {
 		// The sweepshader must be saved if when translate the shape
-		sweepShader = new int[]{color1,color2};
-		
+		sweepShader = new int[] { color1, color2 };
+
 		int[] colors = new int[3];
 		float[] pos = new float[3];
 		float sweep = this.sweepAngle;
@@ -108,7 +176,7 @@ private int[] sweepShader = null;
 	}
 
 	private void restoreSweepShader() {
-		if (sweepShader !=null) {
+		if (sweepShader != null) {
 			setSweepShader(sweepShader[0], sweepShader[1]);
 		}
 	}
@@ -138,21 +206,24 @@ private int[] sweepShader = null;
 	protected void build(Path path, boolean isBody) {
 		// if (!isBody)path.addRect(getBounds(), Direction.CW);
 		path.moveTo(start.getX1(), start.getY1());
-		if (isBody)
+		if (isBody|| isInputClosed()) // TODO : Fix start position...
 			path.lineTo(start.getX2(), start.getY2());
+		else if (sweepAngle > 0)
+			path.moveTo(start.x1, start.y1);
 		else
-			path.moveTo(start.getX2(), start.getY2());
+			path.moveTo(start.x2, start.y2);
 
 		// Outer arc
 		RectF outerOval = getBounds();
 		path.arcTo(outerOval, startAngle, sweepAngle);
-
-		// TODO : Il faudrait calculer ici le premier point de arcTo si on
-		// affiche le edge
-
+drawOutput(path, output.reverse(), isBody); // TODO : There too
+//		if (isBody||isOutputClosed()) {
+//			path.lineTo(output.x1, output.y1);
+//		}else{
+//			path.moveTo(output.x1, output.y1);
+//		}
 		RectF innerOval = getInnerBounds();
 		path.arcTo(innerOval, startAngle + sweepAngle, -sweepAngle);
-
 
 		//
 		// float xdc = (xc + xd) / 2;
@@ -165,5 +236,10 @@ private int[] sweepShader = null;
 	private RectF getInnerBounds() {
 		return new RectF(center.x - innerRadiusX, center.y - innerRadiusY,
 				center.x + innerRadiusX, center.y + innerRadiusY);
+	}
+
+	@Override
+	public void setBodyGradient(int color1, int color2) {
+		setSweepShader(color1, color2);
 	}
 }

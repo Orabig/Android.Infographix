@@ -1,9 +1,14 @@
 package com.crocoware.infographix;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import android.graphics.Canvas;
 import android.graphics.Path;
 import android.graphics.PathEffect;
 import android.graphics.Shader;
+
+import com.crocoware.infographix.shapes.IPipelinePart;
 
 /**
  * Builds a bordered shape from many others
@@ -13,9 +18,9 @@ import android.graphics.Shader;
  */
 public class ComposedBordered extends AbstractBorderedDrawable {
 
-	private AbstractBorderedDrawable[] parts;
+	private ArrayList<IBorderedDrawable> parts;
 
-	public ComposedBordered(AbstractBorderedDrawable... parts) {
+	public ComposedBordered(IPipelinePart... parts) {
 		setParts(parts);
 	}
 
@@ -24,23 +29,28 @@ public class ComposedBordered extends AbstractBorderedDrawable {
 	 * 
 	 * @param parts
 	 */
-	public void setParts(AbstractBorderedDrawable... parts) {
-		this.parts = parts;
+	public void setParts(IPipelinePart... parts) {
+		this.parts = new ArrayList<IBorderedDrawable>(parts.length);
+		this.parts.addAll(Arrays.asList(parts));
+	}
+
+	public void push(IPipelinePart part) {
+		parts.add(part);
 	}
 
 	@Override
-	protected Path getEdgePath() {
+	public Path getEdgePath() {
 		Path path = new Path();
-		for (AbstractBorderedDrawable part : parts) {
+		for (IBorderedDrawable part : parts) {
 			path.addPath(part.getEdgePath());
 		}
 		return path;
 	}
 
 	@Override
-	protected Path getBodyPath() {
+	public Path getBodyPath() {
 		Path path = new Path();
-		for (AbstractBorderedDrawable part : parts) {
+		for (IBorderedDrawable part : parts) {
 			path.addPath(part.getBodyPath());
 		}
 		return path;
@@ -49,7 +59,7 @@ public class ComposedBordered extends AbstractBorderedDrawable {
 	@Override
 	public float getLeft() {
 		float left = Float.POSITIVE_INFINITY;
-		for (AbstractBorderedDrawable part : parts) {
+		for (IBorderedDrawable part : parts) {
 			if (left > part.getLeft())
 				left = part.getLeft();
 		}
@@ -59,7 +69,7 @@ public class ComposedBordered extends AbstractBorderedDrawable {
 	@Override
 	public float getRight() {
 		float right = Float.NEGATIVE_INFINITY;
-		for (AbstractBorderedDrawable part : parts) {
+		for (IBorderedDrawable part : parts) {
 			if (right < part.getRight())
 				right = part.getRight();
 		}
@@ -69,7 +79,7 @@ public class ComposedBordered extends AbstractBorderedDrawable {
 	@Override
 	public float getTop() {
 		float top = Float.POSITIVE_INFINITY;
-		for (AbstractBorderedDrawable part : parts) {
+		for (IBorderedDrawable part : parts) {
 			if (top > part.getTop())
 				top = part.getTop();
 		}
@@ -79,7 +89,7 @@ public class ComposedBordered extends AbstractBorderedDrawable {
 	@Override
 	public float getBottom() {
 		float bottom = Float.NEGATIVE_INFINITY;
-		for (AbstractBorderedDrawable part : parts) {
+		for (IBorderedDrawable part : parts) {
 			if (bottom < part.getBottom())
 				bottom = part.getBottom();
 		}
@@ -88,7 +98,7 @@ public class ComposedBordered extends AbstractBorderedDrawable {
 
 	@Override
 	public void translate(float dx, float dy) {
-		for (AbstractBorderedDrawable part : parts) {
+		for (IBorderedDrawable part : parts) {
 			part.translate(dx, dy);
 		}
 	}
@@ -102,7 +112,7 @@ public class ComposedBordered extends AbstractBorderedDrawable {
 		float height1 = getHeight();
 		float ratioX = width / width1;
 		float ratioY = height / height1;
-		for (AbstractBorderedDrawable part : parts) {
+		for (IBorderedDrawable part : parts) {
 			float newX = (part.getLeft() - left1) * ratioX + left;
 			float newY = (part.getTop() - top1) * ratioY + top;
 			float newW = part.getWidth() * ratioX;
@@ -119,71 +129,77 @@ public class ComposedBordered extends AbstractBorderedDrawable {
 
 	@Override
 	public void setBodyARGB(int a, int r, int g, int b) {
-		for (AbstractBorderedDrawable part : parts) {
+		for (IBorderedDrawable part : parts) {
 			part.setBodyARGB(a, r, g, b);
 		}
 	}
 
 	@Override
 	public void setBodyAlpha(int arg0) {
-		for (AbstractBorderedDrawable part : parts) {
+		for (IBorderedDrawable part : parts) {
 			part.setBodyAlpha(arg0);
 		}
 	}
 
 	@Override
 	public void setBodyColor(int arg0) {
-		for (AbstractBorderedDrawable part : parts) {
+		for (IBorderedDrawable part : parts) {
 			part.setBodyColor(arg0);
 		}
 	}
 
 	@Override
 	public void setBodyShader(Shader shader) {
-		for (AbstractBorderedDrawable part : parts) {
+		for (IBorderedDrawable part : parts) {
 			part.setBodyShader(shader);
 		}
 	}
 
 	@Override
 	public void setEdgeARGB(int a, int r, int g, int b) {
-		for (AbstractBorderedDrawable part : parts) {
+		for (IBorderedDrawable part : parts) {
 			part.setEdgeARGB(a, r, g, b);
 		}
 	}
 
 	@Override
 	public void setEdgeAlpha(int a) {
-		for (AbstractBorderedDrawable part : parts) {
+		for (IBorderedDrawable part : parts) {
 			part.setEdgeAlpha(a);
 		}
 	}
 
 	@Override
 	public void setEdgeColor(int color) {
-		for (AbstractBorderedDrawable part : parts) {
+		for (IBorderedDrawable part : parts) {
 			part.setEdgeColor(color);
 		}
 	}
 
 	@Override
 	public void setEdgePathEffect(PathEffect effect) {
-		for (AbstractBorderedDrawable part : parts) {
+		for (IBorderedDrawable part : parts) {
 			part.setEdgePathEffect(effect);
 		}
 	}
 
 	@Override
 	public void setEdgeWidth(float width) {
-		for (AbstractBorderedDrawable part : parts) {
+		for (IBorderedDrawable part : parts) {
 			part.setEdgeWidth(width);
 		}
 	}
 
 	@Override
 	public void draw(Canvas canvas) {
-		for (AbstractBorderedDrawable part : parts) {
-			part.draw(canvas);
+		int size = parts.size();
+		// Draw parts in reverse order (arrows need this)
+		for (int i=0;i<size;i++) {
+			parts.get(size-i-1).draw(canvas);
 		}
+	}
+
+	public boolean isEmpty() {
+		return parts.isEmpty();
 	}
 }

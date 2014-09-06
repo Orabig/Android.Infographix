@@ -1,6 +1,7 @@
 package com.crocoware.infographix;
 
 import android.graphics.Canvas;
+import android.graphics.Path;
 import android.graphics.PathEffect;
 import android.graphics.Shader;
 
@@ -54,4 +55,18 @@ public interface IBorderedDrawable {
 	public void setBodyAlpha(int arg0);
 
 	public void setBodyARGB(int a, int r, int g, int b);
+	
+	public void setOutputArrow(Arrow outputArrow);
+
+	public Path getBodyPath();
+
+	public Path getEdgePath();
+
+	public abstract void setOutputClosed(boolean isOutputClosed);
+
+	public abstract boolean isOutputClosed();
+
+	public abstract void setInputClosed(boolean isInputClosed);
+
+	public abstract boolean isInputClosed();
 }

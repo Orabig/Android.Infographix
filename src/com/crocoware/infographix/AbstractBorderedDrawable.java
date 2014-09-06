@@ -9,6 +9,8 @@ import android.graphics.PathEffect;
 import android.graphics.RectF;
 import android.graphics.Shader;
 
+import com.crocoware.infographix.shapes.Segment;
+
 public abstract class AbstractBorderedDrawable implements IBorderedDrawable {
 	private Paint bodyPaint;
 	private Paint edgePaint;
@@ -19,6 +21,11 @@ public abstract class AbstractBorderedDrawable implements IBorderedDrawable {
 
 	private Path edges;
 	private Path body;
+
+	// Input/Output may be close
+	private boolean isInputClosed = false, isOutputClosed = false;
+
+	private Arrow outputArrow;
 
 	public AbstractBorderedDrawable() {
 	}
@@ -71,7 +78,7 @@ public abstract class AbstractBorderedDrawable implements IBorderedDrawable {
 	/**
 	 * @return the path of the edges of the shape
 	 */
-	protected Path getEdgePath() {
+	public Path getEdgePath() {
 		if (edges == null) {
 			edges = new Path();
 			build(edges, false);
@@ -83,7 +90,7 @@ public abstract class AbstractBorderedDrawable implements IBorderedDrawable {
 	 * @return the path of the body of the shape. May be null if the shape is a
 	 *         segment only
 	 */
-	protected Path getBodyPath() {
+	public Path getBodyPath() {
 		if (body == null) {
 			body = new Path();
 			build(body, true);
@@ -95,7 +102,7 @@ public abstract class AbstractBorderedDrawable implements IBorderedDrawable {
 		if (bodyPaint == null) {
 			bodyPaint = new Paint();
 
-			bodyPaint.setColor(Color.BLUE);
+			bodyPaint.setColor(Color.WHITE);
 			bodyPaint.setAntiAlias(false);
 			bodyPaint.setStyle(Paint.Style.FILL);
 		}
@@ -175,6 +182,70 @@ public abstract class AbstractBorderedDrawable implements IBorderedDrawable {
 
 	public RectF getBounds() {
 		return new RectF(getLeft(), getTop(), getRight(), getBottom());
+	}
+
+	/**
+	 * This must be called by subclasses while building the path, when it's time
+	 * to draw the input. It's assumed that the graph cursor is at one edge of
+	 * the input, and the target point is given by (toX,toY)
+	 * 
+	 * @param path
+	 * @param toX
+	 * @param toY
+	 * @param isBody
+	 */
+	protected void drawInput(Path path, float toX, float toY, boolean isBody) {
+		if (isBody || isInputClosed())
+			path.lineTo(toX, toY);
+	}
+
+	/**
+	 * The same than drawInput, but for output. This will automatically draw an
+	 * arrow, if any has been defined
+	 * 
+	 * @param path
+	 * @param output
+	 *            the output segment. We are supposed to draw from x1,y1 to
+	 *            x2,y2
+	 * @param isBody
+	 */
+	protected void drawOutput(Path path, Segment output, boolean isBody) {
+		if (getOutputArrow() != null)
+			getOutputArrow().draw(output, path);
+		else if (isBody || isOutputClosed())
+			path.lineTo(output.getX2(), output.getY2());
+		else
+			path.moveTo(output.getX2(), output.getY2());
+	}
+
+	@Override
+	public boolean isInputClosed() {
+		return isInputClosed;
+	}
+
+	@Override
+	public void setInputClosed(boolean isInputClosed) {
+		this.isInputClosed = isInputClosed;
+		rebuild();
+	}
+
+	@Override
+	public boolean isOutputClosed() {
+		return isOutputClosed;
+	}
+
+	@Override
+	public void setOutputClosed(boolean isOutputClosed) {
+		this.isOutputClosed = isOutputClosed;
+		rebuild();
+	}
+
+	public Arrow getOutputArrow() {
+		return outputArrow;
+	}
+
+	public void setOutputArrow(Arrow outputArrow) {
+		this.outputArrow = outputArrow;
 	}
 
 }

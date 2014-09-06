@@ -22,6 +22,10 @@ public class Segment {
 		this(start.x1, start.y1, start.x2, start.y2);
 	}
 
+	public Segment(PointF a, PointF b) {
+		this(a.x, a.y, b.x, b.y);
+	}
+
 	public float getX1() {
 		return x1;
 	}
@@ -90,5 +94,21 @@ public class Segment {
 
 	public Vector getVector() {
 		return new Vector(x2 - x1, y2 - y1);
+	}
+
+	public Segment rotate(PointF center, float angle) {
+		float cos = (float) Math.cos(angle * Math.PI / 180);
+		float sin = (float) Math.sin(angle * Math.PI / 180);
+		PointF A = rotatePoint(x1, y1, center, cos, sin);
+		PointF B = rotatePoint(x2, y2, center, cos, sin);
+		return new Segment(A, B);
+	}
+
+	private PointF rotatePoint(float x, float y, PointF center, float cos,
+			float sin) {
+		float dx = x - center.x;
+		float dy = y - center.y;
+		return new PointF(center.x + cos * dx - sin * dy, center.y + sin * dx
+				+ cos * dy);
 	}
 }
