@@ -123,7 +123,7 @@ public class PipeShape extends AbstractBorderedDrawable implements
 		path.lineTo(xb, yb);
 		drawOutput(path, getOutput(), isBody);
 		path.lineTo(xc, yc);
-		drawInput(path, xa, ya, isBody);
+		drawInput(path, getInput(), isBody);
 	}
 
 	private void drawCurved(Path path, boolean isBody) {
@@ -146,7 +146,7 @@ public class PipeShape extends AbstractBorderedDrawable implements
 
 		path.cubicTo(xd - odx, yd - ody, xc + idx, yc + idy, xc, yc);
 
-		drawInput(path, xa, ya, isBody);
+		drawInput(path, getInput(), isBody);
 	}
 
 	public boolean isStraight() {
@@ -158,10 +158,12 @@ public class PipeShape extends AbstractBorderedDrawable implements
 	}
 
 	public Segment getInput() {
+		// TODO : Cache this
 		return new Segment(xa, ya, xc, yc);
 	}
 
 	public Segment getOutput() {
+		// TODO : cache this too
 		return new Segment(xb, yb, xd, yd);
 	}
 

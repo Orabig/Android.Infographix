@@ -5,7 +5,6 @@ import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.graphics.SweepGradient;
-import android.util.Log;
 
 import com.crocoware.infographix.AbstractBorderedDrawable;
 
@@ -32,9 +31,10 @@ public class ArcShape extends AbstractBorderedDrawable implements IOutputShape,
 	 */
 	public ArcShape(Segment start, PointF center, float sweepAngle) {
 		super();
-		this.start = new Segment(sweepAngle > 0 ? start.reverse() : start);
+		this.start = new Segment(start);
 		this.center = new PointF(center.x, center.y);
 		startAngle = this.start.getAngle();
+		if (sweepAngle>0) startAngle+=180;
 		this.sweepAngle = sweepAngle;
 		computeRadius(start, center);
 		computeOutput();
@@ -67,6 +67,32 @@ public class ArcShape extends AbstractBorderedDrawable implements IOutputShape,
 		this(start, computeCenterFor(start, angle), angle);
 	}
 
+	private void computeRadius(Segment start, PointF center) {
+		if (sweepAngle>0) {
+			// start.X2/Y2 is inside the turn
+			innerRadiusX = innerRadiusY = PointF.length(start.getX2() - center.x,
+					start.getY2() - center.y);
+			outerRadiusX = outerRadiusY = PointF.length(start.getX1() - center.x,
+					start.getY1() - center.y);
+		}else {
+		innerRadiusX = innerRadiusY = PointF.length(start.getX1() - center.x,
+				start.getY1() - center.y);
+		outerRadiusX = outerRadiusY = PointF.length(start.getX2() - center.x,
+				start.getY2() - center.y);
+		}
+	}
+
+	private void computeOutput() {
+		output = start.rotate(center, sweepAngle);
+	}
+
+	/**
+	 * When the user doe not manually define a center for the rotation, we must compute it from the length of the curve
+	 * @param start
+	 * @param angle
+	 * @param length
+	 * @return
+	 */
 	private static PointF computeCenterFor(Segment start, float angle,
 			float length) {
 		// Compute innerRadius from length
@@ -79,10 +105,23 @@ public class ArcShape extends AbstractBorderedDrawable implements IOutputShape,
 		return getCenterAtRadius(start, angle, innerRadius);
 	}
 
+	/**
+	 * The default inner radius for a turn is its width
+	 * @param start
+	 * @param angle
+	 * @return
+	 */
 	private static PointF computeCenterFor(Segment start, float angle) {
 		return getCenterAtRadius(start, angle, start.getLength());
 	}
 
+	/**
+	 * Computes the center of rotation, given the inner radius
+	 * @param start
+	 * @param angle
+	 * @param innerRadius
+	 * @return
+	 */
 	private static PointF getCenterAtRadius(Segment start, float angle,
 			float innerRadius) {
 		Vector dir = start.getVector().normalize();
@@ -92,19 +131,6 @@ public class ArcShape extends AbstractBorderedDrawable implements IOutputShape,
 		else
 			return new PointF(start.x2 + dir.dx * innerRadius, start.y2
 					+ dir.dy * innerRadius);
-	}
-
-	private void computeRadius(Segment start, PointF center) {
-		innerRadiusX = innerRadiusY = PointF.length(start.getX1() - center.x,
-				start.getY1() - center.y);
-		outerRadiusX = outerRadiusY = PointF.length(start.getX2() - center.x,
-				start.getY2() - center.y);
-	}
-
-	private void computeOutput() {
-		output = start.rotate(center, sweepAngle);
-		if (sweepAngle > 0)
-			output = output.reverse();
 	}
 
 	public Segment getOutput() {
@@ -206,31 +232,16 @@ public class ArcShape extends AbstractBorderedDrawable implements IOutputShape,
 	protected void build(Path path, boolean isBody) {
 		// if (!isBody)path.addRect(getBounds(), Direction.CW);
 		path.moveTo(start.getX1(), start.getY1());
-		if (isBody|| isInputClosed()) // TODO : Fix start position...
-			path.lineTo(start.getX2(), start.getY2());
-		else if (sweepAngle > 0)
-			path.moveTo(start.x1, start.y1);
-		else
-			path.moveTo(start.x2, start.y2);
 
 		// Outer arc
-		RectF outerOval = getBounds();
-		path.arcTo(outerOval, startAngle, sweepAngle);
-drawOutput(path, output.reverse(), isBody); // TODO : There too
-//		if (isBody||isOutputClosed()) {
-//			path.lineTo(output.x1, output.y1);
-//		}else{
-//			path.moveTo(output.x1, output.y1);
-//		}
-		RectF innerOval = getInnerBounds();
-		path.arcTo(innerOval, startAngle + sweepAngle, -sweepAngle);
+		RectF firstArc = sweepAngle>0?getBounds():getInnerBounds();
+		RectF secondArc = sweepAngle>0?getInnerBounds():getBounds();
+		
+		path.arcTo(firstArc, startAngle , sweepAngle);
+		drawOutput(path, output, isBody); 
+		path.arcTo(secondArc, startAngle+ sweepAngle, -sweepAngle);
 
-		//
-		// float xdc = (xc + xd) / 2;
-		// path.cubicTo(xdc, yd, xdc, yc, xc, yc);
-
-		if (isBody)
-			path.close();
+		drawInput(path, start, isBody);
 	}
 
 	private RectF getInnerBounds() {

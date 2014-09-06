@@ -187,21 +187,24 @@ public abstract class AbstractBorderedDrawable implements IBorderedDrawable {
 	/**
 	 * This must be called by subclasses while building the path, when it's time
 	 * to draw the input. It's assumed that the graph cursor is at one edge of
-	 * the input, and the target point is given by (toX,toY)
+	 * the input, and the target point is given by (start.X1/Y1)
+	 * 
+	 * IMPORTANT : The vector input will be drawn backward. So the path must be set at its end point before this call
 	 * 
 	 * @param path
-	 * @param toX
-	 * @param toY
+	 * @param input
 	 * @param isBody
 	 */
-	protected void drawInput(Path path, float toX, float toY, boolean isBody) {
+	protected void drawInput(Path path, Segment input, boolean isBody) {
 		if (isBody || isInputClosed())
-			path.lineTo(toX, toY);
+			path.lineTo(input.getX1(), input.getY1());
 	}
 
 	/**
 	 * The same than drawInput, but for output. This will automatically draw an
-	 * arrow, if any has been defined
+	 * arrow, if any has been defined.
+	 * 
+	 * IMPORTANT : The vector output will be drawn forward. So the path must be set at its start point before this call
 	 * 
 	 * @param path
 	 * @param output

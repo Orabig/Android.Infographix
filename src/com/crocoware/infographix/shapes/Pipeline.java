@@ -1,7 +1,5 @@
 package com.crocoware.infographix.shapes;
 
-import android.util.Log;
-
 import com.crocoware.infographix.Arrow;
 import com.crocoware.infographix.ComposedBordered;
 import com.crocoware.infographix.IBorderedDrawable;
@@ -105,8 +103,6 @@ public class Pipeline {
 		// By default, the first shape is closed
 		if (composed.isEmpty())
 			shape.setInputClosed(true);
-		Log.e("Pipe", "isInput=" + shape.isInputClosed() + " on "
-				+ shape.getClass().getName());
 		composed.push(shape);
 	}
 
