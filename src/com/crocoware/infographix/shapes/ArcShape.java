@@ -176,14 +176,17 @@ public class ArcShape extends AbstractBorderedDrawable implements IOutputShape,
 			pos[0] = 0;
 			pos[1] = 1 + sweep / 360;
 			pos[2] = 1;
+			colors[0] = color2;
+			colors[1] = color2;
+			colors[2] = color1;
 		} else {
 			pos[0] = 0;
 			pos[1] = sweep / 360;
 			pos[2] = 1;
+			colors[0] = color1;
+			colors[1] = color1;
+			colors[2] = color2;
 		}
-		colors[0] = color2;
-		colors[1] = color2;
-		colors[2] = color1;
 		SweepGradient shader = new SweepGradient(center.x, center.y, colors,
 				pos);
 		Matrix localM = new Matrix();

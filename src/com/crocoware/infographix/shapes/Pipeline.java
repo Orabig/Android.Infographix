@@ -21,6 +21,8 @@ import com.crocoware.infographix.IBorderedDrawable;
  * 
  * // pipe.getOutput(1).line(100).round(5).write("label");
  * 
+ * The constructor takes a segment which must be facing down if the pipeline goes right.
+ * 
  * Each directive "forward", "turnRight", "turnLeft", "turn", "split" or "join"
  * creates a new shape.
  * 
@@ -87,6 +89,20 @@ public class Pipeline {
 		return this;
 	}
 
+	// Shortcuts for turning left/right
+	public Pipeline turnLeft(float angle) {
+		return turn(-angle);
+	}
+	public Pipeline turnLeft(float angle,float length) {
+		return turn(-angle,length);
+	}
+	public Pipeline turnRight(float angle) {
+		return turn(angle);
+	}
+	public Pipeline turnRight(float angle,float length) {
+		return turn(angle,length);
+	}
+
 	// utility methods
 
 	private void ensureInputAvailable() {
@@ -130,9 +146,20 @@ public class Pipeline {
 	}
 
 	/**
+	 * Reverse the direction of the pipeline
+	 * 
+	 * @return
+	 */
+	public Pipeline reverse() {
+		currentInput = currentInput.reverse();
+		return this;
+	}
+
+	/**
 	 * Defines an arrow at the end of the latest shape inserted
 	 * 
-	 * @param arrow the arrow shape. Use constants of Arrow class
+	 * @param arrow
+	 *            the arrow shape. Use constants of Arrow class
 	 * @return
 	 */
 	public Pipeline setArrow(Arrow arrow) {
