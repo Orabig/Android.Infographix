@@ -35,7 +35,7 @@ public class ArcShape extends AbstractBorderedDrawable implements IOutputShape,
 		super();
 		this.start = new Segment(start);
 		this.center = new PointF(center.x, center.y);
-		startAngle = this.start.getAngle();
+		startAngle = this.start.angle();
 		if (sweepAngle>0) startAngle+=180;
 		this.sweepAngle = sweepAngle;
 		computeRadius(start, center);
@@ -85,7 +85,7 @@ public class ArcShape extends AbstractBorderedDrawable implements IOutputShape,
 	}
 
 	private void computeOutput() {
-		output = start.rotate(center, sweepAngle);
+		output = start.getRotation(center, sweepAngle);
 	}
 
 	/**
@@ -101,7 +101,7 @@ public class ArcShape extends AbstractBorderedDrawable implements IOutputShape,
 		// Radius = innerRadius + width/2
 		// length = Radius * angle (rad)
 		float angleRad = angle * (float) Math.PI / 180;
-		float innerRadius = length / Math.abs(angleRad) - start.getLength() / 2;
+		float innerRadius = length / Math.abs(angleRad) - start.length() / 2;
 		if (innerRadius < 0)
 			innerRadius = 0;
 		return getCenterAtRadius(start, angle, innerRadius);
@@ -114,7 +114,7 @@ public class ArcShape extends AbstractBorderedDrawable implements IOutputShape,
 	 * @return
 	 */
 	private static PointF computeCenterFor(Segment start, float angle) {
-		return getCenterAtRadius(start, angle, start.getLength());
+		return getCenterAtRadius(start, angle, start.length());
 	}
 
 	/**
@@ -193,7 +193,7 @@ public class ArcShape extends AbstractBorderedDrawable implements IOutputShape,
 				pos);
 		Matrix localM = new Matrix();
 		shader.getLocalMatrix(localM);
-		localM.postRotate(start.getAngle(), center.x, center.y);
+		localM.postRotate(start.angle(), center.x, center.y);
 		shader.setLocalMatrix(localM);
 		this.setBodyShader(shader);
 	}

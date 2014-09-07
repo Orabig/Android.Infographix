@@ -43,27 +43,15 @@ public class Vector implements Cloneable {
 	public static float getAngleOf(float dx, float dy) {
 		float angle = (float) (180 * Math.atan2(dy, dx) / Math.PI);
 		if (angle < 0)
-			angle += 360;
+			return angle + 360;
 		return angle;
 	}
 
 	/**
 	 * @return the angle of the direction of the vector, in degrees
 	 */
-	public float getAngle() {
+	public float angle() {
 		return getAngleOf(dx, dy);
-	}
-
-	/**
-	 * Multiply the coordinates of the vector by
-	 * 
-	 * @param mult
-	 * @return the vector itself
-	 */
-	public Vector multiply(float mult) {
-		dx *= mult;
-		dy *= mult;
-		return this;
 	}
 
 	/**
@@ -72,7 +60,7 @@ public class Vector implements Cloneable {
 	 * @param forward
 	 * @return the vector itself
 	 */
-	public Vector offset(Vector forward) {
+	public Vector translate(Vector forward) {
 		dx += forward.dx;
 		dy += forward.dy;
 		return this;
@@ -84,7 +72,7 @@ public class Vector implements Cloneable {
 	 * @param forward
 	 * @return the vector itself
 	 */
-	public Vector offset(float mult, Vector forward) {
+	public Vector translate(float mult, Vector forward) {
 		dx += forward.dx * mult;
 		dy += forward.dy * mult;
 		return this;
@@ -112,6 +100,13 @@ public class Vector implements Cloneable {
 		return new Vector(dx * f, dy * f);
 	}
 
+	/**
+	 * Creates a new vector given a length and a direction (angle)
+	 * 
+	 * @param length
+	 * @param angle
+	 * @return
+	 */
 	public static Vector createFromAngle(float length, float angle) {
 		double rad = angle * Math.PI / 180;
 		return new Vector(length * (float) Math.cos(rad), length

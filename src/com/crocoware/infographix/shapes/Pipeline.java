@@ -2,6 +2,8 @@ package com.crocoware.infographix.shapes;
 
 import java.util.HashMap;
 
+import android.graphics.Color;
+
 import com.crocoware.infographix.Arrow;
 import com.crocoware.infographix.ComposedBordered;
 import com.crocoware.infographix.IBorderedDrawable;
@@ -47,8 +49,13 @@ public class Pipeline {
 
 	private HashMap<String, IPipelinePart> shapesByTag = new HashMap<String, IPipelinePart>();
 
+	// Current properties
+	int currentBodyColor;
+
 	public Pipeline(Segment input) {
 		currentInput = input;
+		// Default properties
+		currentBodyColor = Color.WHITE;
 	}
 
 	// Shape creation directives
@@ -129,7 +136,7 @@ public class Pipeline {
 	public Pipeline split(float width, float ratio) {
 		ensureInputAvailable();
 		push(new SplitShape(currentInput, width, ratio,
-				currentInput.getLength() / 2));
+				currentInput.length() / 2));
 		return this;
 	}
 
@@ -141,7 +148,7 @@ public class Pipeline {
 		return this;
 	}
 
-	public Pipeline joinBefore(Pipeline pipe,  float width) {
+	public Pipeline joinBefore(Pipeline pipe, float width) {
 		ensureInputAvailable();
 		Segment output1 = ((IOutputShape) pipe.getCurrentPart()).getOutput();
 		JoinShape joint = new JoinShape(currentInput, output1, width);
@@ -259,17 +266,29 @@ public class Pipeline {
 		if (composed.isEmpty())
 			shape.setInputClosed(true);
 		composed.push(shape);
+		// Set persisting attributes
+		shape.setBodyColor(currentBodyColor);
+		// TODO : add other attributes
+		// TODO : let the user configure which attributes are persistent.
 	}
 
 	// Customization methods
 
 	public Pipeline setBodyGradient(int color1, int color2) {
-		currentShape.setBodyGradient(color1, color2);
+		if (currentShape != null)
+			currentShape.setBodyGradient(color1, color2);
+		currentBodyColor = color2;
 		return this;
 	}
 
+	public Pipeline setBodyGradient(int color2) {
+		return setBodyGradient(currentBodyColor, color2);
+	}
+
 	public Pipeline setBodyColor(int color) {
-		currentShape.setBodyColor(color);
+		if (currentShape != null)
+			currentShape.setBodyColor(color);
+		currentBodyColor = color;
 		return this;
 	}
 

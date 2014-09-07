@@ -26,7 +26,7 @@ public class SplitShape extends ComposedBordered implements IPipelinePart,
 	 * @param entry
 	 *            the entry segment
 	 * @param length
-	 *            the length of the shape. 
+	 *            the length of the shape.
 	 * @param ratio
 	 *            The ratio of both output pipes
 	 * @param gap
@@ -41,7 +41,7 @@ public class SplitShape extends ComposedBordered implements IPipelinePart,
 		if (ratio > 1)
 			throw new IllegalArgumentException("ratio>1");
 
-		float height = entry.getLength();
+		float height = entry.length();
 
 		// Height of the first part
 		float height1 = ratio * height;
@@ -53,19 +53,19 @@ public class SplitShape extends ComposedBordered implements IPipelinePart,
 
 		Vector down = entry.getVector().normalize();
 
-		Vector toOutput1 = entry.getNormal().multiply(length);
+		Vector toOutput1 = entry.getNormal().scale(length);
 		Vector toOutput2 = (Vector) toOutput1.clone();
 
 		Segment input1 = new Segment(entry.getA(), down.getScaled(height1));
-		Segment input2 = new Segment(entry.getB().offset(-height2, down),
+		Segment input2 = new Segment(entry.getB().translate(-height2, down),
 				down.getScaled(height2));
 
-		toOutput1.offset(-gap1, down);
-		toOutput2.offset(gap2 - height2, down);
+		toOutput1.translate(-gap1, down);
+		toOutput2.translate(gap2 - height2, down);
 
-		Segment output1 = new Segment(entry.getA().offset(toOutput1),
+		Segment output1 = new Segment(entry.getA().translate(toOutput1),
 				down.getScaled(height1));
-		Segment output2 = new Segment(entry.getB().offset(toOutput2),
+		Segment output2 = new Segment(entry.getB().translate(toOutput2),
 				down.getScaled(height2));
 
 		setParts(new PipeShape(input1, output1), new PipeShape(input2, output2));
@@ -95,8 +95,7 @@ public class SplitShape extends ComposedBordered implements IPipelinePart,
 		PipeShape pipe1 = (PipeShape) parts.get(0);
 		Segment input1 = pipe1.getInput();
 		Segment output1 = pipe1.getOutput();
-		this.setBodyShader(new LinearGradient(input1.x1, input1.y1,
-				output1.x1, output1.y1, color1, color2,
-				TileMode.CLAMP));
+		this.setBodyShader(new LinearGradient(input1.x1, input1.y1, output1.x1,
+				output1.y1, color1, color2, TileMode.CLAMP));
 	}
 }

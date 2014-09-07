@@ -3,7 +3,13 @@ package com.crocoware.infographix.utils;
 import android.graphics.PointF;
 
 /**
- * Instances of this class represent oriented segments.
+ * An oriented segment in 2D space.
+ * 
+ * Offers several utility methods for manipulating this object.
+ * 
+ * By convention, methods prefixed by "set..." create a new object, while those
+ * only containing a verb (offset, translate...) change the values of this
+ * object (and return the object itself for commodity)
  * 
  * @author Benoit
  * 
@@ -29,7 +35,7 @@ public class Segment {
 		this(a.x, a.y, b.x, b.y);
 	}
 
-	public Segment(Point origin, Vector dir) {
+	public Segment(Position origin, Vector dir) {
 		this(origin.x, origin.y, origin.x + dir.dx, origin.y + dir.dy);
 	}
 
@@ -54,18 +60,40 @@ public class Segment {
 		y2 += dy;
 	}
 
+	public void translate(Vector forward) {
+		translate(forward.dx, forward.dy);
+	}
+
 	/**
-	 * @return the angle of the direction of the segment, in degrees, between 0 and 359.999
+	 * Offset the coordinates of the vector by a multiple of the given vector
+	 * 
+	 * @param forward
+	 * @return the vector itself
 	 */
-	public float getAngle() {
+	public void translate(float mult, Vector forward) {
+		translate(forward.dx * mult, forward.dy * mult);
+	}
+
+	/**
+	 * @return the angle of the direction of the segment, in degrees, between 0
+	 *         and 359.999
+	 */
+	public float angle() {
 		return Vector.getAngleOf(x2 - x1, y2 - y1);
 	}
 
-	public float getLength() {
+	public float length() {
 		return PointF.length(x2 - x1, y2 - y1);
 	}
 
-	public Segment[] split(int count) {
+	/**
+	 * Cuts the segment into several isomorphic pieces, and returns the array of
+	 * these new segments
+	 * 
+	 * @param count
+	 * @return
+	 */
+	public Segment[] getSplit(int count) {
 		if (count <= 0)
 			throw new IllegalArgumentException("count<=0");
 		Segment[] parts = new Segment[count];
@@ -87,7 +115,14 @@ public class Segment {
 		return new Vector(x2 - x1, y2 - y1);
 	}
 
-	public Segment rotate(PointF center, float angle) {
+	/**
+	 * Computes a rotation of this position around a given center
+	 * 
+	 * @param center
+	 * @param angle
+	 * @return the new position of the given point
+	 */
+	public Segment getRotation(PointF center, float angle) {
 		float cos = (float) Math.cos(angle * Math.PI / 180);
 		float sin = (float) Math.sin(angle * Math.PI / 180);
 		PointF A = rotatePoint(x1, y1, center, cos, sin);
@@ -104,24 +139,24 @@ public class Segment {
 	}
 
 	/**
-	 * @return a new PointF object with X1/Y1 coordinated
+	 * @return the position of the origin of this segment
 	 */
-	public Point getA() {
-		return new Point(x1, y1);
+	public Position getA() {
+		return new Position(x1, y1);
 	}
 
 	/**
-	 * @return a new PointF object with X2/Y2 coordinated
+	 * @return the position of the end point of this segment
 	 */
-	public Point getB() {
-		return new Point(x2, y2);
+	public Position getB() {
+		return new Position(x2, y2);
 	}
 
-	public Point getCenter() {
-		return new Point((x1 + x2) / 2, (y1 + y2) / 2);
+	public Position getCenter() {
+		return new Position((x1 + x2) / 2, (y1 + y2) / 2);
 	}
 
-	public static Segment createFromCenter(Point c, Vector dir) {
+	public static Segment createFromCenter(Position c, Vector dir) {
 		return new Segment(c.x - dir.dx / 2, c.y - dir.dy / 2,
 				c.x + dir.dx / 2, c.y + dir.dy / 2);
 	}

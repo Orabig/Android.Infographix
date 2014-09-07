@@ -35,7 +35,7 @@ public class Arrow {
 	 *            first point of output
 	 */
 	protected void draw(Segment output, Path path) {
-		float len = output.getLength();
+		float len = output.length();
 		Vector right = output.getNormal();
 		Vector down = output.getVector().normalize();
 		float x = output.x1;
