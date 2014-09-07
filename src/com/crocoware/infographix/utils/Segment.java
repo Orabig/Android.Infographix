@@ -1,8 +1,6 @@
-package com.crocoware.infographix.shapes;
+package com.crocoware.infographix.utils;
 
 import android.graphics.PointF;
-
-import com.crocoware.infographix.utils.Point;
 
 /**
  * Instances of this class represent oriented segments.
@@ -11,7 +9,10 @@ import com.crocoware.infographix.utils.Point;
  * 
  */
 public class Segment {
-	protected float x1, y1, x2, y2;
+	public float x1;
+	public float y1;
+	public float x2;
+	public float y2;
 
 	public Segment(float x, float y, float x2, float y2) {
 		x1 = x;
@@ -30,22 +31,6 @@ public class Segment {
 
 	public Segment(Point origin, Vector dir) {
 		this(origin.x, origin.y, origin.x + dir.dx, origin.y + dir.dy);
-	}
-
-	public float getX1() {
-		return x1;
-	}
-
-	public float getX2() {
-		return x2;
-	}
-
-	public float getY1() {
-		return y1;
-	}
-
-	public float getY2() {
-		return y2;
 	}
 
 	/**
