@@ -96,6 +96,14 @@ public class Pipeline {
 	}
 
 	// Shortcuts for turning left/right
+	public Pipeline turnLeft() {
+		return turnLeft(90);
+	}
+
+	public Pipeline turnRight() {
+		return turnRight(90);
+	}
+
 	public Pipeline turnLeft(float angle) {
 		return turn(-angle);
 	}
