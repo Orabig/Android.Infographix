@@ -38,10 +38,13 @@ public class Vector implements Cloneable {
 
 	/**
 	 * @return the angle of the direction of the given vector coordinates, in
-	 *         degrees
+	 *         degrees, between 0 and 359.999
 	 */
 	public static float getAngleOf(float dx, float dy) {
-		return (float) (180 * Math.atan2(dy, dx) / Math.PI);
+		float angle = (float) (180 * Math.atan2(dy, dx) / Math.PI);
+		if (angle < 0)
+			angle += 360;
+		return angle;
 	}
 
 	/**
@@ -110,7 +113,8 @@ public class Vector implements Cloneable {
 	}
 
 	public static Vector createFromAngle(float length, float angle) {
-		double rad = angle*Math.PI/180;
-		return new Vector(length*(float)Math.cos(rad),length*(float)Math.sin(rad));
+		double rad = angle * Math.PI / 180;
+		return new Vector(length * (float) Math.cos(rad), length
+				* (float) Math.sin(rad));
 	}
 }

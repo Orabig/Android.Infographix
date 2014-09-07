@@ -2,6 +2,7 @@ package com.crocoware.infographix.shapes;
 
 import android.graphics.LinearGradient;
 import android.graphics.Shader.TileMode;
+import android.util.Log;
 
 import com.crocoware.infographix.ComposedBordered;
 import com.crocoware.infographix.utils.Point;
@@ -16,7 +17,8 @@ import com.crocoware.infographix.utils.Vector;
  * @author Benoit
  * 
  */
-public class JoinShape extends ComposedBordered implements IPipelinePart {
+public class JoinShape extends ComposedBordered implements IPipelinePart,
+		IOutputShape {
 
 	private Segment output; // TODO : translate output
 
@@ -58,7 +60,7 @@ public class JoinShape extends ComposedBordered implements IPipelinePart {
 		setParts(new PipeShape(entry1, output1), new PipeShape(entry2, output2));
 	}
 
-	public Segment getOutputSegment() {
+	public Segment getOutput() {
 		return output;
 	}
 
@@ -73,8 +75,7 @@ public class JoinShape extends ComposedBordered implements IPipelinePart {
 		PipeShape pipe1 = (PipeShape) parts.get(0);
 		Segment input1 = pipe1.getInput();
 		Segment output1 = pipe1.getOutput();
-		this.setBodyShader(new LinearGradient(input1.x1, input1.y1,
-				output1.x1, output1.y1, color1, color2,
-				TileMode.CLAMP));
+		this.setBodyShader(new LinearGradient(input1.x1, input1.y1, output1.x1,
+				output1.y1, color1, color2, TileMode.CLAMP));
 	}
 }

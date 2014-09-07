@@ -55,7 +55,7 @@ public class Segment {
 	}
 
 	/**
-	 * @return the angle of the direction of the segment, in degrees
+	 * @return the angle of the direction of the segment, in degrees, between 0 and 359.999
 	 */
 	public float getAngle() {
 		return Vector.getAngleOf(x2 - x1, y2 - y1);
