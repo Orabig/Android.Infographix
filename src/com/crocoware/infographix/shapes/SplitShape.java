@@ -25,18 +25,17 @@ public class SplitShape extends ComposedBordered implements IPipelinePart,
 	 * 
 	 * @param entry
 	 *            the entry segment
-	 * @param width
-	 *            the width of the shape. If width<0, the shape goes from right
-	 *            to left
+	 * @param length
+	 *            the length of the shape. 
 	 * @param ratio
 	 *            The ratio of both output pipes
 	 * @param gap
 	 *            Distance between the tow output segments
 	 */
-	public SplitShape(Segment entry, float width, float ratio, float gap) {
+	public SplitShape(Segment entry, float length, float ratio, float gap) {
 		super();
-		if (width <= 0)
-			throw new IllegalArgumentException("width<=0");
+		if (length <= 0)
+			throw new IllegalArgumentException("length<=0");
 		if (ratio < 0)
 			throw new IllegalArgumentException("ratio<0");
 		if (ratio > 1)
@@ -54,7 +53,7 @@ public class SplitShape extends ComposedBordered implements IPipelinePart,
 
 		Vector down = entry.getVector().normalize();
 
-		Vector toOutput1 = entry.getNormal().multiply(width);
+		Vector toOutput1 = entry.getNormal().multiply(length);
 		Vector toOutput2 = (Vector) toOutput1.clone();
 
 		Segment input1 = new Segment(entry.getA(), down.getScaled(height1));

@@ -108,4 +108,9 @@ public class Vector implements Cloneable {
 	public Vector getScaled(float f) {
 		return new Vector(dx * f, dy * f);
 	}
+
+	public static Vector createFromAngle(float length, float angle) {
+		double rad = angle*Math.PI/180;
+		return new Vector(length*(float)Math.cos(rad),length*(float)Math.sin(rad));
+	}
 }

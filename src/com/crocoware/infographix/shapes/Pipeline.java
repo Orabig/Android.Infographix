@@ -45,6 +45,8 @@ public class Pipeline {
 	private Segment currentInput;
 	private IPipelinePart currentShape;
 
+	private HashMap<String, IPipelinePart> shapesByTag = new HashMap<String, IPipelinePart>();
+
 	public Pipeline(Segment input) {
 		currentInput = input;
 	}
@@ -123,6 +125,54 @@ public class Pipeline {
 		return this;
 	}
 
+	public Pipeline joinAfter(Pipeline pipe, float width) {
+		ensureInputAvailable();
+		Segment output1 = ((IOutputShape) pipe.getCurrentPart()).getOutput();
+		JoinShape joint = new JoinShape(output1, currentInput, width);
+		push(joint);
+		return this;
+	}
+
+	public Pipeline joinBefore(Pipeline pipe,  float width) {
+		ensureInputAvailable();
+		Segment output1 = ((IOutputShape) pipe.getCurrentPart()).getOutput();
+		JoinShape joint = new JoinShape(currentInput, output1, width);
+		push(joint);
+		return this;
+	}
+
+	public Pipeline joinAfter(Pipeline pipe, String tag, float width) {
+		ensureInputAvailable();
+		Segment output1 = ((IOutputShape) pipe.getPartByTag(tag)).getOutput();
+		JoinShape joint = new JoinShape(output1, currentInput, width);
+		push(joint);
+		return this;
+	}
+
+	public Pipeline joinBefore(Pipeline pipe, String tag, float width) {
+		ensureInputAvailable();
+		Segment output1 = ((IOutputShape) pipe.getPartByTag(tag)).getOutput();
+		JoinShape joint = new JoinShape(currentInput, output1, width);
+		push(joint);
+		return this;
+	}
+
+	public Pipeline joinAfter(String tag, float width) {
+		ensureInputAvailable();
+		Segment output1 = ((IOutputShape) getPartByTag(tag)).getOutput();
+		JoinShape joint = new JoinShape(output1, currentInput, width);
+		push(joint);
+		return this;
+	}
+
+	public Pipeline joinBefore(String tag, float width) {
+		ensureInputAvailable();
+		Segment output1 = ((IOutputShape) shapesByTag.get(tag)).getOutput();
+		JoinShape joint = new JoinShape(currentInput, output1, width);
+		push(joint);
+		return this;
+	}
+
 	/**
 	 * Selects an output when the latest shape has multiple outputs
 	 * 
@@ -151,9 +201,13 @@ public class Pipeline {
 		return this;
 	}
 
-	private HashMap<String, IPipelinePart> shapesByTag = new HashMap<String, IPipelinePart>();
+	private IPipelinePart getPartByTag(String tag) {
+		return shapesByTag.get(tag);
+	}
 
-	// private Stack<String> lastTags;
+	private IPipelinePart getCurrentPart() {
+		return currentShape;
+	}
 
 	/**
 	 * Saves the last shape into a new tag name. The state of the pipeline may

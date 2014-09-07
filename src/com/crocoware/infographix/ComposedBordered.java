@@ -191,11 +191,27 @@ public class ComposedBordered extends AbstractBorderedDrawable {
 	}
 
 	@Override
+	public void setInputClosed(boolean isInputClosed) {
+		super.setInputClosed(isInputClosed);
+		for (IBorderedDrawable part : parts) {
+			part.setInputClosed(isInputClosed);
+		}
+	}
+
+	@Override
+	public void setOutputClosed(boolean isOutputClosed) {
+		super.setOutputClosed(isOutputClosed);
+		for (IBorderedDrawable part : parts) {
+			part.setOutputClosed(isOutputClosed);
+		}
+	}
+
+	@Override
 	public void draw(Canvas canvas) {
 		int size = parts.size();
 		// Draw parts in reverse order (arrows need this)
-		for (int i=0;i<size;i++) {
-			parts.get(size-i-1).draw(canvas);
+		for (int i = 0; i < size; i++) {
+			parts.get(size - i - 1).draw(canvas);
 		}
 	}
 

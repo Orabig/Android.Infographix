@@ -116,4 +116,13 @@ public class Segment {
 	public Point getB() {
 		return new Point(x2, y2);
 	}
+
+	public Point getCenter() {
+		return new Point((x1 + x2) / 2, (y1 + y2) / 2);
+	}
+
+	public static Segment createFromCenter(Point c, Vector dir) {
+		return new Segment(c.x - dir.dx / 2, c.y - dir.dy / 2,
+				c.x + dir.dx / 2, c.y + dir.dy / 2);
+	}
 }
