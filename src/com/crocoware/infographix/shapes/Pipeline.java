@@ -43,19 +43,20 @@ public class Pipeline {
 
 	// STATE variables : used while the pipe is being built.
 	private ComposedBordered composed = new ComposedBordered();
+	private boolean mustCloseNextInput;
 
 	private Segment currentInput;
 	private IPipelinePart currentShape;
 
 	private HashMap<String, IPipelinePart> shapesByTag = new HashMap<String, IPipelinePart>();
+	private HashMap<String, ShapeProperties> propsByTag = new HashMap<String, ShapeProperties>();
 
 	// Current properties
-	int currentBodyColor;
+	ShapeProperties currentProperties = new ShapeProperties();
 
 	public Pipeline(Segment input) {
 		currentInput = input;
-		// Default properties
-		currentBodyColor = Color.WHITE;
+		mustCloseNextInput = true;
 	}
 
 	// Shape creation directives
@@ -70,6 +71,20 @@ public class Pipeline {
 	public Pipeline forward(float length) {
 		ensureInputAvailable();
 		push(new PipeShape(currentInput, length));
+		return this;
+	}
+
+	/**
+	 * Appends a shape to the pipe, going forward, and gives a new width at the
+	 * end of the new shape.
+	 * 
+	 * @param length
+	 *            the length of the new shape
+	 * @return
+	 */
+	public Pipeline forward(float length, float width) {
+		ensureInputAvailable();
+		push(new PipeShape(currentInput, length, width));
 		return this;
 	}
 
@@ -140,6 +155,33 @@ public class Pipeline {
 		return this;
 	}
 
+	/**
+	 * Appends a shape splitting the pipe into N outputs
+	 * 
+	 * @param ratio
+	 * @return
+	 */
+	public Pipeline split(float width, float... ratios) {
+		ensureInputAvailable();
+		push(new SplitShape(currentInput, width, ratios, currentInput.length()
+				/ ratios.length));
+		return this;
+	}
+
+	/**
+	 * Appends a shape splitting the pipe into N outputs
+	 * 
+	 * @param ratio
+	 * @return
+	 */
+	public Pipeline split(float width, int N) {
+		float ratios[] = new float[N];
+		for (int i = 0; i < N; i++) {
+			ratios[i] = 1.0f / N;
+		}
+		return split(width, ratios);
+	}
+
 	public Pipeline joinAfter(Pipeline pipe, float width) {
 		ensureInputAvailable();
 		Segment output1 = ((IOutputShape) pipe.getCurrentPart()).getOutput();
@@ -189,6 +231,23 @@ public class Pipeline {
 	}
 
 	/**
+	 * Changes the width of the pipeline.
+	 * 
+	 * @param width
+	 * @return
+	 */
+	public Pipeline setWidth(float width) {
+		ensureInputAvailable();
+		if (width < currentInput.length())
+			close();
+		if (width > currentInput.length())
+			mustCloseNextInput = true;
+		currentInput = currentInput.scaleFromCenter(width
+				/ currentInput.length());
+		return this;
+	}
+
+	/**
 	 * Selects an output when the latest shape has multiple outputs
 	 * 
 	 * @param n
@@ -233,6 +292,8 @@ public class Pipeline {
 	 */
 	public Pipeline tag(String tag) {
 		shapesByTag.put(tag, currentShape);
+		propsByTag.put(tag, currentProperties);
+		currentProperties = (ShapeProperties) currentProperties.clone();
 		return this;
 	}
 
@@ -244,6 +305,8 @@ public class Pipeline {
 	 */
 	public Pipeline back(String tag) {
 		currentShape = shapesByTag.get(tag);
+		currentProperties = propsByTag.get(tag);
+		currentProperties = (ShapeProperties) currentProperties.clone();
 		currentInput = currentShape instanceof IOutputShape ? ((IOutputShape) currentShape)
 				.getOutput() : null;
 		return this;
@@ -263,11 +326,12 @@ public class Pipeline {
 		currentInput = shape instanceof IOutputShape ? ((IOutputShape) shape)
 				.getOutput() : null;
 		// By default, the first shape is closed
-		if (composed.isEmpty())
+		if (mustCloseNextInput)
 			shape.setInputClosed(true);
+		mustCloseNextInput = false;
 		composed.push(shape);
 		// Set persisting attributes
-		shape.setBodyColor(currentBodyColor);
+		currentProperties.applyTo(shape);
 		// TODO : add other attributes
 		// TODO : let the user configure which attributes are persistent.
 	}
@@ -277,18 +341,18 @@ public class Pipeline {
 	public Pipeline setBodyGradient(int color1, int color2) {
 		if (currentShape != null)
 			currentShape.setBodyGradient(color1, color2);
-		currentBodyColor = color2;
+		currentProperties.setBodyColor(color2);
 		return this;
 	}
 
 	public Pipeline setBodyGradient(int color2) {
-		return setBodyGradient(currentBodyColor, color2);
+		return setBodyGradient(currentProperties.bodyColor, color2);
 	}
 
 	public Pipeline setBodyColor(int color) {
 		if (currentShape != null)
 			currentShape.setBodyColor(color);
-		currentBodyColor = color;
+		currentProperties.setBodyColor(color);
 		return this;
 	}
 
@@ -327,5 +391,27 @@ public class Pipeline {
 
 	public IBorderedDrawable getDrawable() {
 		return composed;
+	}
+
+	private final static class ShapeProperties implements Cloneable {
+		// Default properties
+		int bodyColor = Color.WHITE;
+
+		public Object clone() {
+			try {
+				return super.clone();
+			} catch (CloneNotSupportedException e) {
+				// Should not happen
+				return null;
+			}
+		}
+
+		public void applyTo(IPipelinePart shape) {
+			shape.setBodyColor(bodyColor);
+		}
+
+		public void setBodyColor(int color) {
+			bodyColor = color;
+		}
 	}
 }

@@ -21,7 +21,7 @@ public class SplitShape extends ComposedBordered implements IPipelinePart,
 	private Segment outputs[]; // TODO : translate outputs
 
 	/**
-	 * Creates a split shape.
+	 * Creates a split shape with 2 outputs
 	 * 
 	 * @param entry
 	 *            the entry segment
@@ -71,6 +71,75 @@ public class SplitShape extends ComposedBordered implements IPipelinePart,
 		setParts(new PipeShape(input1, output1), new PipeShape(input2, output2));
 
 		outputs = new Segment[] { output1, output2 };
+	}
+
+	/**
+	 * Creates a split shape with N outputs (N is given by the length of
+	 * ratio[])
+	 * 
+	 * @param entry
+	 *            the entry segment
+	 * @param length
+	 *            the length of the shape.
+	 * @param ratio
+	 *            The ratio of each output pipes.
+	 * @param gap
+	 *            Distance between the tow output segments
+	 */
+	public SplitShape(Segment entry, float length, float[] ratio, float gap) {
+		super();
+		int N = ratio.length;
+		if (length <= 0)
+			throw new IllegalArgumentException("length<=0");
+		// if (ratio < 0)
+		// throw new IllegalArgumentException("ratio<0");
+		// if (ratio > 1)
+		// throw new IllegalArgumentException("ratio>1");
+
+		float height = entry.length();
+
+		// Height of the parts
+		float[] heights = new float[N];
+		for (int i = 0; i < N; i++)
+			heights[i] = ratio[i] * height;
+
+		float[] gaps = new float[N];
+		for (int i = 0; i < N; i++)
+			gaps[i] = 0;// (1 - ratio) * gap;
+
+		Vector down = entry.getVector().normalize();
+
+		Vector[] toOutputs = new Vector[N];
+		toOutputs[0] = entry.getNormal().scale(length);
+		for (int i = 1; i < N; i++)
+			toOutputs[i] = (Vector) toOutputs[0].clone();
+
+		Segment[] inputs = new Segment[N];
+		float inputPosition = 0;
+		for (int i = 0; i < N; i++) {
+			inputs[i] = new Segment(
+					entry.getA().translate(inputPosition, down),
+					down.getScaled(heights[i]));
+			inputPosition += heights[i];
+		}
+
+		// toOutput1.translate(-gap1, down);
+		// toOutput2.translate(gap2 - height2, down);
+		float outputOffset = -gap * (N - 1) / 2;
+		for (int i = 0; i < N; i++) {
+			toOutputs[i].translate(outputOffset, down);
+			outputOffset += heights[i] + gap;
+		}
+
+		outputs = new Segment[N];
+		for (int i = 0; i < N; i++)
+			outputs[i] = new Segment(entry.getA().translate(toOutputs[i]),
+					down.getScaled(heights[i]));
+
+		PipeShape[] parts = new PipeShape[N];
+		for (int i = 0; i < N; i++)
+			parts[i] = new PipeShape(inputs[i], outputs[i]);
+		setParts(parts);
 	}
 
 	public Segment[] getOutputs() {

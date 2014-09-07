@@ -64,6 +64,17 @@ public class PipeShape extends AbstractBorderedDrawable implements
 		isStraight = true;
 	}
 
+	public PipeShape(Segment input, float length, float width) {
+		// Vector forward = input.getNormal().scale(length);
+		// Position outputCenter = input.getCenter().translate(forward);
+		// Vector dir = input.getVector().normalize().scale(width);
+		// Segment output = Segment.createFromCenter(outputCenter, dir);
+		// this(input, output);
+		this(input, Segment.createFromCenter(
+				input.getCenter().translate(input.getNormal().scale(length)),
+				input.getVector().normalize().scale(width)));
+	}
+
 	@Override
 	public void resize(float left, float top, float width, float height) {
 		float ratioX = width / getWidth();

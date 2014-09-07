@@ -160,4 +160,8 @@ public class Segment {
 		return new Segment(c.x - dir.dx / 2, c.y - dir.dy / 2,
 				c.x + dir.dx / 2, c.y + dir.dy / 2);
 	}
+
+	public Segment scaleFromCenter(float r) {
+		return createFromCenter(getCenter(), getVector().scale(r));
+	}
 }
