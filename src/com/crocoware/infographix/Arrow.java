@@ -1,7 +1,7 @@
 package com.crocoware.infographix;
 
-import com.crocoware.infographix.shapes.Segment;
-import com.crocoware.infographix.shapes.Vector;
+import com.crocoware.infographix.utils.Segment;
+import com.crocoware.infographix.utils.Vector;
 
 import android.graphics.Path;
 
@@ -38,10 +38,10 @@ public class Arrow {
 		float len = output.getLength();
 		Vector right = output.getNormal();
 		Vector down = output.getVector().normalize();
-		float x = output.getX1();
-		float y = output.getY1();
-		float x2 = output.getX2();
-		float y2 = output.getY2();
+		float x = output.x1;
+		float y = output.y1;
+		float x2 = output.x2;
+		float y2 = output.y2;
 		float lenEdges = len * edges;
 		float lenArrow = len * ahead;
 		path.lineTo(x - down.getX() * lenEdges, y - down.getY() * lenEdges);

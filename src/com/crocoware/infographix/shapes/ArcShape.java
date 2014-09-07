@@ -7,6 +7,8 @@ import android.graphics.RectF;
 import android.graphics.SweepGradient;
 
 import com.crocoware.infographix.AbstractBorderedDrawable;
+import com.crocoware.infographix.utils.Segment;
+import com.crocoware.infographix.utils.Vector;
 
 public class ArcShape extends AbstractBorderedDrawable implements IOutputShape,
 		IPipelinePart {
@@ -70,15 +72,15 @@ public class ArcShape extends AbstractBorderedDrawable implements IOutputShape,
 	private void computeRadius(Segment start, PointF center) {
 		if (sweepAngle>0) {
 			// start.X2/Y2 is inside the turn
-			innerRadiusX = innerRadiusY = PointF.length(start.getX2() - center.x,
-					start.getY2() - center.y);
-			outerRadiusX = outerRadiusY = PointF.length(start.getX1() - center.x,
-					start.getY1() - center.y);
+			innerRadiusX = innerRadiusY = PointF.length(start.x2 - center.x,
+					start.y2 - center.y);
+			outerRadiusX = outerRadiusY = PointF.length(start.x1 - center.x,
+					start.y1 - center.y);
 		}else {
-		innerRadiusX = innerRadiusY = PointF.length(start.getX1() - center.x,
-				start.getY1() - center.y);
-		outerRadiusX = outerRadiusY = PointF.length(start.getX2() - center.x,
-				start.getY2() - center.y);
+		innerRadiusX = innerRadiusY = PointF.length(start.x1 - center.x,
+				start.y1 - center.y);
+		outerRadiusX = outerRadiusY = PointF.length(start.x2 - center.x,
+				start.y2 - center.y);
 		}
 	}
 
@@ -234,7 +236,7 @@ public class ArcShape extends AbstractBorderedDrawable implements IOutputShape,
 	@Override
 	protected void build(Path path, boolean isBody) {
 		// if (!isBody)path.addRect(getBounds(), Direction.CW);
-		path.moveTo(start.getX1(), start.getY1());
+		path.moveTo(start.x1, start.y1);
 
 		// Outer arc
 		RectF firstArc = sweepAngle>0?getBounds():getInnerBounds();

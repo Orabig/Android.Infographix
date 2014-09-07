@@ -7,6 +7,8 @@ import android.graphics.Shader.TileMode;
 
 import com.crocoware.infographix.AbstractBorderedDrawable;
 import com.crocoware.infographix.IBorderedDrawable;
+import com.crocoware.infographix.utils.Segment;
+import com.crocoware.infographix.utils.Vector;
 
 /**
  * This shape is defined by an input (any segment) and an output.

@@ -1,6 +1,8 @@
 package com.crocoware.infographix.shapes;
 
-public interface IOutputShape {
+import com.crocoware.infographix.utils.Segment;
+
+public interface IOutputShape extends IPipelinePart {
 
 	Segment getOutput();
 

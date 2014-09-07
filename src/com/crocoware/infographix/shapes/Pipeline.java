@@ -1,8 +1,11 @@
 package com.crocoware.infographix.shapes;
 
+import java.util.HashMap;
+
 import com.crocoware.infographix.Arrow;
 import com.crocoware.infographix.ComposedBordered;
 import com.crocoware.infographix.IBorderedDrawable;
+import com.crocoware.infographix.utils.Segment;
 
 /**
  * This class allow easy definition of a chain of shapes.
@@ -21,7 +24,8 @@ import com.crocoware.infographix.IBorderedDrawable;
  * 
  * // pipe.getOutput(1).line(100).round(5).write("label");
  * 
- * The constructor takes a segment which must be facing down if the pipeline goes right.
+ * The constructor takes a segment which must be facing down if the pipeline
+ * goes right.
  * 
  * Each directive "forward", "turnRight", "turnLeft", "turn", "split" or "join"
  * creates a new shape.
@@ -93,14 +97,87 @@ public class Pipeline {
 	public Pipeline turnLeft(float angle) {
 		return turn(-angle);
 	}
-	public Pipeline turnLeft(float angle,float length) {
-		return turn(-angle,length);
+
+	public Pipeline turnLeft(float angle, float length) {
+		return turn(-angle, length);
 	}
+
 	public Pipeline turnRight(float angle) {
 		return turn(angle);
 	}
-	public Pipeline turnRight(float angle,float length) {
-		return turn(angle,length);
+
+	public Pipeline turnRight(float angle, float length) {
+		return turn(angle, length);
+	}
+
+	/**
+	 * Appends a shape splitting the pipe into 2 outputs
+	 * 
+	 * @param ratio
+	 * @return
+	 */
+	public Pipeline split(float width, float ratio) {
+		ensureInputAvailable();
+		push(new SplitShape(currentInput, width, ratio,
+				currentInput.getLength() / 2));
+		return this;
+	}
+
+	/**
+	 * Selects an output when the latest shape has multiple outputs
+	 * 
+	 * @param n
+	 * @return
+	 */
+	public Pipeline select(int n) {
+		if (!(currentShape instanceof IMultipleOutputShape))
+			throw new IllegalStateException("Cannot select on last shape '"
+					+ currentShape.getClass().getSimpleName() + "'");
+		try {
+			IOutputShape[] parts = ((IMultipleOutputShape) currentShape)
+					.getShapes();
+			if (parts != null) {
+				currentShape = parts[n];
+				currentInput = parts[n].getOutput();
+			} else {
+				currentInput = ((IMultipleOutputShape) currentShape)
+						.getOutputs()[n];
+			}
+		} catch (ArrayIndexOutOfBoundsException e) {
+			throw new IllegalStateException("Cannot select on last shape '"
+					+ currentShape.getClass().getSimpleName() + "' : '" + n
+					+ "' is an incorrect index for outputs");
+		}
+		return this;
+	}
+
+	private HashMap<String, IPipelinePart> shapesByTag = new HashMap<String, IPipelinePart>();
+
+	// private Stack<String> lastTags;
+
+	/**
+	 * Saves the last shape into a new tag name. The state of the pipeline may
+	 * be latter recalled with back()
+	 * 
+	 * @param tag
+	 * @return
+	 */
+	public Pipeline tag(String tag) {
+		shapesByTag.put(tag, currentShape);
+		return this;
+	}
+
+	/**
+	 * Retrieve the state of the pipeline saved with tag()
+	 * 
+	 * @param tag
+	 * @return
+	 */
+	public Pipeline back(String tag) {
+		currentShape = shapesByTag.get(tag);
+		currentInput = currentShape instanceof IOutputShape ? ((IOutputShape) currentShape)
+				.getOutput() : null;
+		return this;
 	}
 
 	// utility methods
@@ -122,7 +199,7 @@ public class Pipeline {
 		composed.push(shape);
 	}
 
-	// Customizatin methods
+	// Customization methods
 
 	public Pipeline setBodyGradient(int color1, int color2) {
 		currentShape.setBodyGradient(color1, color2);

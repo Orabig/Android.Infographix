@@ -1,6 +1,7 @@
 package com.crocoware.infographix.shapes;
 
 import com.crocoware.infographix.ComposedBordered;
+import com.crocoware.infographix.utils.Segment;
 
 /**
  * This shape joins two "entry" segments into an unique output
@@ -30,7 +31,7 @@ public class HJoinShape extends ComposedBordered {
 		super();
 		if (width == 0)
 			throw new IllegalArgumentException("width==0");
-		if (entry1.getX1() != entry2.getX1())
+		if (entry1.x1 != entry2.x1)
 			throw new IllegalArgumentException("entry1 and 2 are not aligned");
 		// if ( TEST order entry1 < entry2)
 		// throw new IllegalArgumentException("ratio>1");
@@ -43,7 +44,7 @@ public class HJoinShape extends ComposedBordered {
 		setParts(new PipeShape(entry1, SBa), new PipeShape(entry2,
 				SBb));
 
-		output = new Segment(entry1.getX1() + width, entry1.y1 + dY,entry1.getX2() + width, entry2.y2 - dY);
+		output = new Segment(entry1.x1 + width, entry1.y1 + dY,entry1.x2 + width, entry2.y2 - dY);
 	}
 
 	public Segment getOutputSegment() {

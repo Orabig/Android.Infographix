@@ -9,7 +9,7 @@ import android.graphics.PathEffect;
 import android.graphics.RectF;
 import android.graphics.Shader;
 
-import com.crocoware.infographix.shapes.Segment;
+import com.crocoware.infographix.utils.Segment;
 
 public abstract class AbstractBorderedDrawable implements IBorderedDrawable {
 	private Paint bodyPaint;
@@ -197,7 +197,7 @@ public abstract class AbstractBorderedDrawable implements IBorderedDrawable {
 	 */
 	protected void drawInput(Path path, Segment input, boolean isBody) {
 		if (isBody || isInputClosed())
-			path.lineTo(input.getX1(), input.getY1());
+			path.lineTo(input.x1, input.y1);
 	}
 
 	/**
@@ -216,9 +216,9 @@ public abstract class AbstractBorderedDrawable implements IBorderedDrawable {
 		if (getOutputArrow() != null)
 			getOutputArrow().draw(output, path);
 		else if (isBody || isOutputClosed())
-			path.lineTo(output.getX2(), output.getY2());
+			path.lineTo(output.x2, output.y2);
 		else
-			path.moveTo(output.getX2(), output.getY2());
+			path.moveTo(output.x2, output.y2);
 	}
 
 	@Override

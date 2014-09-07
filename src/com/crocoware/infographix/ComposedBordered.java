@@ -18,7 +18,7 @@ import com.crocoware.infographix.shapes.IPipelinePart;
  */
 public class ComposedBordered extends AbstractBorderedDrawable {
 
-	private ArrayList<IBorderedDrawable> parts;
+	protected ArrayList<IBorderedDrawable> parts;
 
 	public ComposedBordered(IPipelinePart... parts) {
 		setParts(parts);
