@@ -79,6 +79,21 @@ public class Vector implements Cloneable {
 	}
 
 	/**
+	 * Rotates the coordinates of the vector by a given angle (degree, clockwise)
+	 * 
+	 * @param angle
+	 * @return the vector itself
+	 */
+	public Vector rotate(float angle) {
+		float cos = (float) Math.cos(angle * Math.PI / 180);
+		float sin = (float) Math.sin(angle * Math.PI / 180);
+		float nx = cos * dx - sin * dy;
+		dy = sin * dx + cos * dy;
+		dx = nx;
+		return this;
+	}
+
+	/**
 	 * Scales the vector by a multiple
 	 * 
 	 * @param f

@@ -1,13 +1,19 @@
-package com.crocoware.infographix.shapes;
+package com.crocoware.infographix;
 
 import java.util.HashMap;
 
 import android.graphics.Color;
 
-import com.crocoware.infographix.Arrow;
-import com.crocoware.infographix.ComposedBordered;
-import com.crocoware.infographix.IBorderedDrawable;
+import com.crocoware.infographix.shapes.ArcShape;
+import com.crocoware.infographix.shapes.IMultipleOutputShape;
+import com.crocoware.infographix.shapes.IOutputShape;
+import com.crocoware.infographix.shapes.IPipelinePart;
+import com.crocoware.infographix.shapes.JoinShape;
+import com.crocoware.infographix.shapes.PipeShape;
+import com.crocoware.infographix.shapes.SplitShape;
+import com.crocoware.infographix.utils.Position;
 import com.crocoware.infographix.utils.Segment;
+import com.crocoware.infographix.utils.Vector;
 
 /**
  * This class allow easy definition of a chain of shapes.
@@ -100,6 +106,18 @@ public class Pipeline {
 	public Pipeline turn(float angle, float length) {
 		ensureInputAvailable();
 		push(new ArcShape(currentInput, angle, length));
+		return this;
+	}
+
+	/**
+	 * Appends a shape to the pipe, turning around a given center point
+	 * @param center
+	 * @param angle
+	 * @return
+	 */
+	public Pipeline turnAround(Position center, float angle) {
+		ensureInputAvailable();
+		push(new ArcShape(currentInput, center, angle));
 		return this;
 	}
 
@@ -391,6 +409,30 @@ public class Pipeline {
 
 	public IBorderedDrawable getDrawable() {
 		return composed;
+	}
+
+	/**
+	 * @return the output segment at this position
+	 */
+	public Segment getOutputSegment() {
+		ensureInputAvailable();
+		return new Segment(currentInput);
+	}
+
+	/**
+	 * @return the position of the center of the output
+	 */
+	public Position getOutputPosition() {
+		ensureInputAvailable();
+		return currentInput.getCenter();
+	}
+
+	/**
+	 * @return the current direction
+	 */
+	public Vector getDirection() {
+		ensureInputAvailable();
+		return currentInput.getNormal();
 	}
 
 	private final static class ShapeProperties implements Cloneable {
