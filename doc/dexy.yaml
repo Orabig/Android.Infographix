@@ -1,1 +1,7 @@
-ROOT-PROJECT-README.md|jinja
+# Source inclusion from 'Test' project
+code:
+   - .java|idio|t
+
+ROOT-PROJECT-README.md|jinja:
+   - code
+   - assets

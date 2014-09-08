@@ -1,4 +1,6 @@
 @echo off
+echo Copying last version of test classes
+copy /Y ..\..\Android.Infographix.Test\src\com\crocoware\infographix\test\*.java .\src
 echo Generating dexy documentation
 dexy
 

@@ -1,2 +1,4 @@
 .dexy
 .trash
+output/*
+src/*.java
